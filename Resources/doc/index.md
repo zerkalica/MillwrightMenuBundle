@@ -58,6 +58,7 @@ millwright_menu:
 Creating a menu from service
 ----------------------------
 
+```
 $menuService = $this->get('millwright_menu.factory');
 
 use Millwright\MenuBundle\MenuItem;
@@ -67,3 +68,4 @@ $menu->addChild('fos_user_registration_register'); // create item with name, lab
 $child = new MenuItem('fos_user_change_password');
 $child->setRole(ROLE_USER); // item allowed only for ROLE_USER
 $menu->addChild($child);
+```
