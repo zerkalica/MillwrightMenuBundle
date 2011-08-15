@@ -15,7 +15,7 @@
             <argument type="service" id="translator" />
             <argument type="service" id="security.context" />
         </service>
-	
+
 		<service id="millwright_menu.main" class="%knp_menu.main.class%" scope="request">
 			<tag name="knp_menu.menu" alias="main" />
 			<argument type="service" id="millwright_menu.factory" />
