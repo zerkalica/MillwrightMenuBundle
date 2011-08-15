@@ -1,5 +1,5 @@
 Using menus with MillwrightMenuBundle
-=========================
+=====================================
 
 MillwrightMenuBundle extends base functionality of KnpMenuBundle and adds configuration, route, translation and security context support.
 
@@ -27,18 +27,19 @@ Root menu options:
 Creating a menu from configuration
 ----------------------------------
 
-config.yml:
+```
+# app/config/config.yml:
 imports:
     - { resource: menu.yml }
 
 knp_menu:
     twig: true
-
+```
 
 All options defined in parent menu item used as defaults in submenu items.
 
-
-menu.yml:
+```
+# app/config/menu.yml:
 millwright_menu:
     main: #menu id
         domain: 'MillwrightMenuBundle' # use this domain for label translation in all child items by default
@@ -52,6 +53,7 @@ millwright_menu:
                     fos_user_change_password:
                         label: 'change_password.submit' # define custom label for change password link
                         domain: 'FOSUserBundle'
+```
 
 Creating a menu from service
 ----------------------------
