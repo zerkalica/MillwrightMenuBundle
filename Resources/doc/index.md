@@ -5,23 +5,25 @@ MillwrightMenuBundle extends base functionality of KnpMenuBundle and adds config
 
 Each menu item has setters/getters, and can be configured from array:
 
-Menu item options:
-    <key>  - by default used as name, role and label
-    domain - translation domain for label translation, if not set, no label translation will be set
-    translateParams - translation params
-    label  - label text or translation string template
-    route  - route name for uri generation, if no uri setted manually
-    routeParams - route params
-    absolute    - true, for absolute url generation from route
-    uri    - if set, route parameter will be ignored
-    name   - name of menu item
-    role   - access role for menu item
-    submenu - sub menu
+### Menu item options
 
-Root menu options:
-    domain - default translation domain for child items
-    role   - default role for child items
-    submenu - menu items
+1. <key>  - by default used as name, role and label
+2. domain - translation domain for label translation, if not set, no label translation will be set
+3. translateParams - translation params
+4. label  - label text or translation string template
+5. route  - route name for uri generation, if no uri setted manually
+6. routeParams - route params
+7. absolute    - true, for absolute url generation from route
+8. uri    - if set, route parameter will be ignored
+9. name   - name of menu item
+10. role   - access role for menu item
+11. submenu - sub menu
+
+### Root menu options
+
+1. domain - default translation domain for child items
+2. role   - default role for child items
+3. submenu - menu items
 
 
 Creating a menu from configuration
