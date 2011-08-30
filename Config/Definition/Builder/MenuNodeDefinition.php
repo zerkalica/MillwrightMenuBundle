@@ -3,6 +3,9 @@
 namespace Millwright\MenuBundle\Config\Definition\Builder;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
+/**
+ * Configuration definition for menu nodes
+ */
 class MenuNodeDefinition extends ArrayNodeDefinition
 {
     public function menuNodeHierarhy($depth = 3)
@@ -17,6 +20,7 @@ class MenuNodeDefinition extends ArrayNodeDefinition
             ->children()
                 ->scalarNode('id')->end()
                 ->scalarNode('name')->end()
+                ->scalarNode('uri')->end()
                 ->scalarNode('role')->end()
                 ->scalarNode('label')->end()
                 ->scalarNode('translateParams')->defaultValue(array())->end()
