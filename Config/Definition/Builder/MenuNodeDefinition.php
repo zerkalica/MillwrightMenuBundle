@@ -5,7 +5,7 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 class MenuNodeDefinition extends ArrayNodeDefinition
 {
-    public function menuNodeHierarhy($depth = 3)
+    public function menuNodeHierarhy($depth = 10)
     {
         if ($depth == 0) {
             return $this;
