@@ -84,8 +84,8 @@ class MenuContext
         if ($item->getDomain()) {
             $item->setLabel($this->translator->trans($item->getLabel(), $item->getTranslateParams(), $item->getDomain()));
         }
-        if ($item->getRole()) {
-            $item->setShow($this->securityContext->isGranted($item->getRole()));
+        if ($item->getRoles()) {
+            $item->setShow($this->securityContext->isGranted($item->getRoles()));
         }
 
         return $this;

@@ -16,7 +16,7 @@ Each menu item has setters/getters, and can be configured from array:
 7. absolute    - true, for absolute url generation from route
 8. uri    - if set, route parameter will be ignored
 9. name   - name of menu item
-10. role   - access role for menu item
+10. roles   - access roles for menu item (a string separated with ',' or an array)
 11. submenu - sub menu
 
 ### Root menu options
@@ -45,7 +45,7 @@ All options defined in parent menu item used as defaults in submenu items.
 millwright_menu:
     main: #menu id
         domain: 'MillwrightMenuBundle' # use this domain for label translation in all child items by default
-        role: ROLE_USER # use this role in all child items by default
+        roles: ROLE_USER # use this role in all child items by default
         submenu:
             homepage: {role: IS_AUTHENTICATED_ANONYMOUSLY} # redefine default role
             sonata_admin_dashboard: {role: ROLE_SONATA_ADMIN}
@@ -68,6 +68,6 @@ $menu = $menuService->create('main');
 $menu->addChild('fos_user_registration_register'); // create item with name, label and route = fos_user_registration_register
 
 $child = new MenuItem('fos_user_change_password');
-$child->setRole(ROLE_USER); // item allowed only for ROLE_USER
+$child->setRoles(array('ROLE_USER')); // item allowed only for ROLE_USER
 $menu->addChild($child);
 ```
