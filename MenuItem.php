@@ -17,11 +17,11 @@ use Millwright\MenuBundle\MenuContext;
 class MenuItem extends KnpMenuItem
 {
     /**
-     * Access role for menu item
+     * Access roles for menu item
      *
      * @var string
      */
-    protected $role;
+    protected $roles = array();
 
     /**
      * Route name for uri generation
@@ -86,7 +86,7 @@ class MenuItem extends KnpMenuItem
             'uri',
             'domain',
             'attributes',
-            'role',
+            'roles',
             'translateParams',
             'route',
             'routeParams',
@@ -180,7 +180,7 @@ class MenuItem extends KnpMenuItem
             $this->setNum($parent->count());
 
             $this
-                ->setRole($parent->getRole())
+                ->setRoles($parent->getRoles())
                 ->setRouteParams($parent->getRouteParams())
                 ->setMenuContext($parent->getMenuContext())
                 ->setChildClass($parent->getChildClass())
@@ -302,22 +302,26 @@ class MenuItem extends KnpMenuItem
     }
 
     /**
-     * Set role for menu item
+     * Set roles for menu item
      *
-     * @param  string $role
-     * @return \Millwright\MenuBundle\MenuItem
-     *
+     * @param  array $roles
+     * @return MenuItem
      */
-    public function setRole($role)
+    public function setRoles(array $roles)
     {
-        $this->role = $role;
+        $this->roles = (array) $roles;
 
         return $this;
     }
 
-    public function getRole()
+    /**
+     * Get roles for menu item
+     *
+     * @return array
+     */
+    public function getRoles()
     {
-        return $this->role;
+        return $this->roles;
     }
 
     /**
