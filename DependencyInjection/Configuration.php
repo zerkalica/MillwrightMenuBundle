@@ -26,9 +26,9 @@ class Configuration implements ConfigurationInterface
             ->prototype('array')
             ->children()
                 ->scalarNode('id')->end()
-                ->scalarNode('domain')->end()
+                ->scalarNode('translateDomain')->end()
                 ->scalarNode('role')->end()
-                ->menuNode('submenu')->menuNodeHierarhy()
+                ->menuNode('children')->menuNodeHierarhy()
             ->end();
 
         return $treeBuilder;

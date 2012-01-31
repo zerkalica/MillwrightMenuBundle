@@ -21,18 +21,27 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                 ->scalarNode('id')->end()
                 ->scalarNode('name')->end()
                 ->scalarNode('uri')->end()
-                ->arrayNode('roles')
+                ->arrayNode('role')
                     ->defaultValue(array())
-                    ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                    ->beforeNormalization()->ifString()->then(
+                        function($v) {
+                            return preg_split('/\s*,\s*/', $v);
+                        })->end()
                     ->prototype('scalar')->end()
                     ->end()
                 ->scalarNode('label')->end()
-                ->scalarNode('translateParams')->defaultValue(array())->end()
-                ->scalarNode('domain')->end()
+                ->scalarNode('translateDomain')->end()
+                ->scalarNode('translateParameters')->defaultValue(array())->end()
+                ->scalarNode('attributes')->defaultValue(array())->end()
+                ->scalarNode('linkAttributes')->defaultValue(array())->end()
+                ->scalarNode('childrenAttributes')->defaultValue(array())->end()
+                ->scalarNode('labelAttributes')->defaultValue(array())->end()
+                ->scalarNode('display')->defaultValue(true)->end()
+                ->scalarNode('displayChildren')->defaultValue(true)->end()
                 ->scalarNode('route')->end()
-                ->arrayNode('routeParams')->end()
-                ->booleanNode('absolute')->end()
-                ->menuNode('submenu')->menuNodeHierarhy($depth - 1)->end()
+                ->arrayNode('routeParameters')->defaultValue(array())->end()
+                ->booleanNode('routeAbsolute')->defaultValue(false)->end()
+                ->menuNode('children')->menuNodeHierarhy($depth - 1)->end()
             ->end();
     }
 }

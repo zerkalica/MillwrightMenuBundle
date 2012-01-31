@@ -1,27 +1,37 @@
 <?xml version="1.0" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
-	<parameters>
-		<parameter key="knp_menu.main.class">Millwright\MenuBundle\Menu\MainMenu</parameter>
-        <parameter key="knp_menu.factory.class">Millwright\MenuBundle\MenuContext</parameter>
-	</parameters>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="millwright_menu.menu_builder.class">Millwright\MenuBundle\Menu\MenuBuilder</parameter>
+        <parameter key="millwright_menu.factory.class">Millwright\MenuBundle\Menu\MenuFactory</parameter>
+        <parameter key="millwright_menu.main.class">Millwright\MenuBundle\Menu\MenuItem</parameter>
+    </parameters>
 
-	<services>
-        <service id="millwright_menu.factory" class="%knp_menu.factory.class%" scope="request">
+    <services>
+
+        <service id="millwright_menu.factory" class="%millwright_menu.factory.class%" scope="request">
             <argument type="service" id="router" />
-            <argument type="service" id="request" />
-            <argument type="service" id="translator" />
             <argument type="service" id="security.context" />
         </service>
 
-		<service id="millwright_menu.main" class="%knp_menu.main.class%" scope="request">
-			<tag name="knp_menu.menu" alias="main" />
-			<argument type="service" id="millwright_menu.factory" />
+        <service id="millwright_menu.builder" class="%millwright_menu.menu_builder.class%" scope="request">
+            <argument type="service" id="millwright_menu.factory" />
+        </service>
+
+        <service
+            id="millwright_menu.main"
+            class="%millwright_menu.main.class%"
+            factory-service="millwright_menu.builder"
+            factory-method="createMenu"
+            scope="request"
+        >
+            <argument type="service" id="request" />
             <argument>%millwright_menu.main%</argument>
-		</service>
-	</services>
+            <tag name="knp_menu.menu" alias="main" />
+        </service>
+    </services>
 
 </container>
 
