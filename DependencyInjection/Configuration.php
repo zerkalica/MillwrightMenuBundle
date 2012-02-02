@@ -22,14 +22,20 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('millwright_menu', 'array', new MenuTreeBuilder());
 
         $rootNode
-            ->useAttributeAsKey('id')
-            ->prototype('array')
             ->children()
-                ->scalarNode('id')->end()
-                ->scalarNode('translateDomain')->end()
-                ->scalarNode('role')->end()
-                ->menuNode('children')->menuNodeHierarhy()
-            ->end();
+                ->menuNode('route')->menuNodePlain()->end()
+                ->arrayNode('menu')
+                    ->useAttributeAsKey('id')
+                    ->prototype('array')
+                    ->children()
+                        ->scalarNode('id')->end()
+                        ->scalarNode('translateDomain')->end()
+                        ->scalarNode('role')->end()
+                        ->menuNode('children')->menuNodeHierarhy()
+                    ->end()
+                ->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }

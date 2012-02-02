@@ -44,16 +44,52 @@ All options defined in parent menu item used as defaults in submenu items.
 ```
 # app/config/menu.yml:
 millwright_menu:
-    main: #menu id
-        translateDomain: 'MillwrightMenuBundle' # use this domain for label translation in all child items by default
-        roles: ROLE_USER # use this role in all child items by default
-        submenu:
-            homepage: {role: IS_AUTHENTICATED_ANONYMOUSLY} # redefine default role
-            sonata_admin_dashboard: {role: ROLE_SONATA_ADMIN}
-            fos_user_registration_register: ~ #name, route and label loaded by this key
-            fos_user_profile_show:
-                submenu:
-                    fos_user_change_password:
-                        label: 'change_password.submit' # define custom label for change password link
-                        translateDomain: 'FOSUserBundle'
+    route: ~
+    menu: ~
+        main: #menu id
+            translateDomain: 'MillwrightMenuBundle' # use this domain for label translation in all child items by default
+            roles: ROLE_USER # use this role in all child items by default
+            children:
+                homepage: {role: IS_AUTHENTICATED_ANONYMOUSLY} # redefine default role
+                sonata_admin_dashboard: {role: ROLE_SONATA_ADMIN}
+                fos_user_registration_register: ~ #name, route and label loaded by this key
+                fos_user_profile_show:
+                    children:
+                        fos_user_change_password:
+                            label: 'change_password.submit' # define custom label for change password link
+                            translateDomain: 'FOSUserBundle'
+```
+
+Alternative configuration:
+```
+#app/config/menu.yml
+
+millwright_menu:
+    route:
+        homepage:
+            translateDomain: 'MillwrightMenuBundle'
+            role: IS_AUTHENTICATED_ANONYMOUSLY
+
+        fos_user_registration_register:
+            translateDomain: 'MillwrightMenuBundle'
+            role: ROLE_USER
+
+        fos_user_profile_show:
+            translateDomain: 'MillwrightMenuBundle'
+            role: ROLE_USER
+
+        fos_user_change_password:
+            translateDomain: 'FOSUserBundle'
+            role: ROLE_USER
+            label: 'change_password.submit'
+
+    menu:
+        main:
+            children:
+                homepage: ~
+                fos_user_registration_register: ~
+                fos_user_profile_show:
+                    children:
+                        fos_user_change_password: ~
+
 ```

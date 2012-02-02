@@ -26,23 +26,31 @@ class MenuBuilder
     private $factory;
 
     /**
+     * @var array
+     */
+    private $menuOptions;
+
+    /**
      * @param FactoryInterface $factory
      */
-    public function __construct(FactoryInterface $factory)
+    public function __construct(FactoryInterface $factory, array $menuOptions = array())
     {
-        $this->factory = $factory;
+        $this->factory      = $factory;
+        $this->menuOptions  = $menuOptions;
     }
 
     /**
      * Create menu
      *
      * @param  Request $request
-     * @param  array $options
+     * @param  string  $name
      * @return ItemInterface
      */
-    public function createMenu(Request $request, array $options = array())
+    public function createMenu(Request $request, $name)
     {
-        $menu = $this->factory->createFromArray($options);
+        $options = $this->menuOptions[$name];
+        $menu    = $this->factory->createFromArray($options);
+
         $menu->setCurrentUri($request->getRequestUri());
 
         return $menu;

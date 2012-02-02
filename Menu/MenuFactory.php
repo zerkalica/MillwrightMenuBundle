@@ -34,12 +34,20 @@ class MenuFactory implements FactoryInterface
      */
     protected $security;
 
+    /**
+     * @var array
+     */
+    protected $routeDefaults;
+
     public function __construct(
         UrlGeneratorInterface $generator,
-        SecurityContextInterface $security)
+        SecurityContextInterface $security,
+        array $routeDefaults = array()
+    )
     {
         $this->generator = $generator;
         $this->security  = $security;
+        $this->routeDefaults = $routeDefaults;
     }
 
     /**
@@ -62,21 +70,6 @@ class MenuFactory implements FactoryInterface
             'translateDomain'    => null,
             'translateParameters'    => array(),
         );
-    }
-
-    /**
-     * Get default values for menu item options array normalization
-     *
-     * @return array
-     */
-    protected function getNormalizeParams()
-    {
-        return array_merge($this->getDefaultParams(), array(
-            'route'           => null,
-            'routeParameters' => array(),
-            'routeAbsolute'   => false,
-            'role'            => array(),
-        ));
     }
 
     /**
@@ -129,7 +122,9 @@ class MenuFactory implements FactoryInterface
      */
     public function createItem($name, array $options = array())
     {
-        $options += $this->getNormalizeParams();
+        if (isset($this->routeDefaults[$name])) {
+            $options = array_merge($options, $this->routeDefaults[$name]);
+        }
         $item    = $this->createItemInstance($name);
 
         if ($options['route']) {
@@ -142,10 +137,12 @@ class MenuFactory implements FactoryInterface
 
         $this->setOptions($item, $options);
 
-        $role = $options['role'];
+        if(isset($options['role'])) {
+            $role = $options['role'];
 
-        if($name && $role && !$this->security->isGranted($role)) {
-            $item->setDisplay(false);
+            if($name && $role && !$this->security->isGranted($role)) {
+                $item->setDisplay(false);
+            }
         }
 
         return $item;

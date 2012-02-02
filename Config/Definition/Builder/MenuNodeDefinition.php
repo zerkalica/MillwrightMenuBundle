@@ -14,6 +14,13 @@ class MenuNodeDefinition extends ArrayNodeDefinition
             return $this;
         }
 
+        return $this->beginTree()
+                ->menuNode('children')->menuNodeHierarhy($depth - 1)->end()
+            ->end();
+    }
+
+    private function beginTree()
+    {
         return $this
             ->useAttributeAsKey('id')
             ->prototype('array')
@@ -40,8 +47,13 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                 ->scalarNode('displayChildren')->defaultValue(true)->end()
                 ->scalarNode('route')->end()
                 ->arrayNode('routeParameters')->defaultValue(array())->end()
-                ->booleanNode('routeAbsolute')->defaultValue(false)->end()
-                ->menuNode('children')->menuNodeHierarhy($depth - 1)->end()
-            ->end();
+                ->booleanNode('routeAbsolute')->defaultValue(false)->end();
     }
+
+    public function menuNodePlain()
+    {
+        return $this->beginTree()
+            ->end()->end();
+    }
+
 }

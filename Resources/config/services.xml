@@ -14,10 +14,12 @@
         <service id="millwright_menu.factory" class="%millwright_menu.factory.class%" scope="request">
             <argument type="service" id="router" />
             <argument type="service" id="security.context" />
+            <argument>%millwright_menu.route%</argument>
         </service>
 
         <service id="millwright_menu.builder" class="%millwright_menu.menu_builder.class%" scope="request">
             <argument type="service" id="millwright_menu.factory" />
+            <argument>%millwright_menu.menu%</argument>
         </service>
 
         <service
@@ -28,7 +30,7 @@
             scope="request"
         >
             <argument type="service" id="request" />
-            <argument>%millwright_menu.main%</argument>
+            <argument>main</argument>
             <tag name="knp_menu.menu" alias="main" />
         </service>
     </services>
