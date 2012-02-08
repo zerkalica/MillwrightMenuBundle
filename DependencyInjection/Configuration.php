@@ -30,7 +30,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('id')->end()
                         ->scalarNode('translateDomain')->end()
-                        ->scalarNode('role')->end()
+                        ->scalarNode('roles')->end()
                         ->menuNode('children')->menuNodeHierarhy()
                     ->end()
                 ->end()

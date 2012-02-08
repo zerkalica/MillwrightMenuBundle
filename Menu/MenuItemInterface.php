@@ -46,4 +46,63 @@ interface MenuItemInterface extends ItemInterface
      */
     public function getTranslateParameters();
 
+    /**
+     * Set roles
+     *
+     * @param  array $roles
+     * @return MenuItem
+     */
+    public function setRoles(array $roles);
+
+    /**
+     * Get roles
+     *
+     * @return array
+     */
+    public function getRoles();
+
+    /**
+     * Set route name
+     *
+     * @param  string $route
+     * @return MenuItem
+     */
+    public function setRoute($route);
+
+    /**
+     * Get route name
+     *
+     * @return string
+     */
+    public function getRoute();
+
+    /**
+     * Is route absolute ?
+     *
+     * @param  bool $routeAbsolute
+     * @return MenuItem
+     */
+    public function setRouteAbsolute($routeAbsolute);
+
+    /**
+     * Get routeAbsolute
+     *
+     * @return bool
+     */
+    public function getRouteAbsolute();
+
+    /**
+     * Set secureParams
+     *
+     * @param  array $secureParams
+     * @return MenuItem
+     */
+    public function setSecureParams(array $secureParams);
+
+    /**
+     * Get secureParams
+     *
+     * @return array
+     */
+    public function getSecureParams();
 }

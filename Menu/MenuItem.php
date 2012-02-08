@@ -6,7 +6,7 @@
 namespace Millwright\MenuBundle\Menu;
 
 use Knp\Menu\MenuItem as KnpMenuItem;
-use Knp\Menu\ItemInterface;
+
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
  * @category    Millwright
@@ -23,6 +23,106 @@ class MenuItem extends KnpMenuItem implements MenuItemInterface
      * @var array
      */
     protected $translateParameters;
+
+    /**
+     * @var string
+     */
+    protected $route;
+
+    /**
+     * @var bool
+     */
+    protected $routeAbsolute;
+
+    /**
+     * @var array
+     */
+    protected $roles;
+
+    /**
+     * @var array
+     */
+    protected $secureParams;
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setSecureParams()
+     */
+    public function setSecureParams(array $secureParams)
+    {
+        $this->secureParams = $secureParams;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getSecureParams()
+     */
+    public function getSecureParams()
+    {
+        return $this->secureParams;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setRoles()
+     */
+    public function setRoles(array $roles)
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getRoles()
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setRouteAbsolute()
+     */
+    public function setRouteAbsolute($routeAbsolute)
+    {
+        $this->routeAbsolute = $routeAbsolute;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getRouteAbsolute()
+     */
+    public function getRouteAbsolute()
+    {
+        return $this->routeAbsolute;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setRoute()
+     */
+    public function setRoute($route)
+    {
+        $this->route = $route;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getRoute()
+     */
+    public function getRoute()
+    {
+        return $this->route;
+    }
 
     /**
      * {@inheritdoc}

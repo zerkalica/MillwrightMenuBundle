@@ -7,18 +7,26 @@
         <parameter key="millwright_menu.menu_builder.class">Millwright\MenuBundle\Menu\MenuBuilder</parameter>
         <parameter key="millwright_menu.factory.class">Millwright\MenuBundle\Menu\MenuFactory</parameter>
         <parameter key="millwright_menu.main.class">Millwright\MenuBundle\Menu\MenuItem</parameter>
+        <parameter key="millwright_menu.merger.class">Millwright\MenuBundle\Config\OptionMerger</parameter>
     </parameters>
 
     <services>
 
-        <service id="millwright_menu.factory" class="%millwright_menu.factory.class%" scope="request">
+        <service id="millwright_menu.merger" class="%millwright_menu.merger.class%" scope="request">
             <argument type="service" id="router" />
-            <argument type="service" id="security.context" />
+            <argument type="service" id="annotation_reader" />
             <argument>%millwright_menu.route%</argument>
+        </service>
+
+
+        <service id="millwright_menu.factory" class="%millwright_menu.factory.class%" scope="request">
         </service>
 
         <service id="millwright_menu.builder" class="%millwright_menu.menu_builder.class%" scope="request">
             <argument type="service" id="millwright_menu.factory" />
+            <argument type="service" id="router" />
+            <argument type="service" id="security.context" />
+            <argument type="service" id="millwright_menu.merger" />
             <argument>%millwright_menu.menu%</argument>
         </service>
 
@@ -29,8 +37,8 @@
             factory-method="createMenu"
             scope="request"
         >
-            <argument type="service" id="request" />
             <argument>main</argument>
+            <argument type="service" id="request" />
             <tag name="knp_menu.menu" alias="main" />
         </service>
     </services>
