@@ -13,34 +13,27 @@ class OptionMerger implements OptionMergerInterface
     /**
      * @var RouterInterface
      */
-    protected $router;
-
-    /**
-     * @var array
-     */
-    protected $routeDefaults;
+    private $router;
 
     /**
      * @var Reader
      */
-    protected $reader;
+    private $reader;
 
     public function __construct(
         RouterInterface $router,
-        Reader $reader,
-        array $routeDefaults = array()
+        Reader $reader
     )
     {
-        $this->router = $router;
-        $this->reader = $reader;
-        $this->routeDefaults = $routeDefaults;
+        $this->router  = $router;
+        $this->reader  = $reader;
     }
 
     /**
      * {@inheritdoc}
      * @see Millwright\MenuBundle\Config.OptionMergerInterface::getDefaultParams()
      */
-    public function getDefaultParams()
+    protected function getDefaultParams()
     {
         return array(
             'uri'                => null,
@@ -78,7 +71,7 @@ class OptionMerger implements OptionMergerInterface
      * @param  string $name route name
      * @return \ReflectionMethod
      */
-    protected function getActionMethod($name)
+    private function getActionMethod($name)
     {
         //@todo do not use getRouteCollection - not interface method
         // howto get controller and action name by route name ?
@@ -108,7 +101,7 @@ class OptionMerger implements OptionMergerInterface
      * @param  array[\ReflectionParameter] $arguments
      * @return array
      */
-    protected function mergeAnnotations(array $options, array $annotations,
+    private function mergeAnnotations(array $options, array $annotations,
         array $arguments = array())
     {
         $secureParams = array();
@@ -136,7 +129,7 @@ class OptionMerger implements OptionMergerInterface
      * @param  Object $annotation
      * @return array
      */
-    protected function annotationToArray($annotation)
+    private function annotationToArray($annotation)
     {
         $options = array();
         foreach((array) $annotation as $key => $value) {
@@ -160,7 +153,8 @@ class OptionMerger implements OptionMergerInterface
      *
      * @see Millwright\MenuBundle\Config.OptionMergerInterface::merge()
      */
-    public function merge(array $options, array $parentOptions = array())
+    private function merge(array $options, array $parentOptions = array(),
+        array $routeOptions = array())
     {
         $classAnnotations = array();
         $arguments        = array();
@@ -193,8 +187,8 @@ class OptionMerger implements OptionMergerInterface
             }
         }
 
-        if (isset($this->routeDefaults[$name])) {
-            $options += $this->routeDefaults[$name];
+        if (isset($routeOptions[$name])) {
+            $options += $routeOptions[$name];
         }
 
         foreach($this->getInheritedParams() as $param) {
@@ -210,5 +204,37 @@ class OptionMerger implements OptionMergerInterface
         $options += $this->getDefaultParams();
 
         return $options;
+    }
+
+    private function _merge(array $options, array $parentOptions = array(),
+        array $routeOptions = array())
+    {
+        $options += array('name' => null);
+        if (!empty($options['name'])) {
+            $options = $this->merge($options, $parentOptions, $routeOptions);
+        } else {
+            $options['name'] = null;
+        }
+
+        foreach($options['children'] as $name => & $child) {
+            $child += array('name' => $name);
+            $child = $this->_merge($child, $options, $routeOptions);
+        }
+
+        return $options;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Config.OptionMergerInterface::normalize()
+     */
+    public function normalize(array $options)
+    {
+        $result = array();
+        foreach($options['menu'] as $key => $menu) {
+            $result[$key] = $this->_merge($menu, array(), $options['route']);
+        }
+
+        return $result;
     }
 }

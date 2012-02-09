@@ -8,37 +8,46 @@
         <parameter key="millwright_menu.factory.class">Millwright\MenuBundle\Menu\MenuFactory</parameter>
         <parameter key="millwright_menu.main.class">Millwright\MenuBundle\Menu\MenuItem</parameter>
         <parameter key="millwright_menu.merger.class">Millwright\MenuBundle\Config\OptionMerger</parameter>
+        <parameter key="millwright_menu.context.class">Millwright\MenuBundle\Menu\MenuContext</parameter>
     </parameters>
 
     <services>
 
+        <service id="millwright_menu.context" class="%millwright_menu.context.class%" scope="request">
+            <argument type="service" id="request" />
+            <argument type="service" id="router" />
+            <argument type="service" id="security.context" />
+        </service>
+
+        <service id="millwright_menu.factory" class="%millwright_menu.factory.class%" scope="request">
+            <argument type="service" id="millwright_menu.context" />
+        </service>
+
         <service id="millwright_menu.merger" class="%millwright_menu.merger.class%" scope="request">
             <argument type="service" id="router" />
             <argument type="service" id="annotation_reader" />
-            <argument>%millwright_menu.route%</argument>
-        </service>
-
-
-        <service id="millwright_menu.factory" class="%millwright_menu.factory.class%" scope="request">
         </service>
 
         <service id="millwright_menu.builder" class="%millwright_menu.menu_builder.class%" scope="request">
             <argument type="service" id="millwright_menu.factory" />
-            <argument type="service" id="router" />
-            <argument type="service" id="security.context" />
             <argument type="service" id="millwright_menu.merger" />
-            <argument>%millwright_menu.menu%</argument>
+            <argument type="collection">
+                <argument key="generator_cache_class">%millwright_menu.generator_cache_class%</argument>
+                <argument key="cache_dir">%millwright_menu.cache_dir%</argument>
+                <argument key="debug">%millwright_menu.debug%</argument>
+                <argument key="menu">%millwright_menu.menu%</argument>
+                <argument key="route">%millwright_menu.route%</argument>
+            </argument>
         </service>
 
         <service
             id="millwright_menu.main"
             class="%millwright_menu.main.class%"
             factory-service="millwright_menu.builder"
-            factory-method="createMenu"
+            factory-method="create"
             scope="request"
         >
             <argument>main</argument>
-            <argument type="service" id="request" />
             <tag name="knp_menu.menu" alias="main" />
         </service>
     </services>

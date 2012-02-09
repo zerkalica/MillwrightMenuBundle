@@ -22,6 +22,16 @@ use Knp\Menu\NodeInterface;
 class MenuFactory implements FactoryInterface
 {
     /**
+     * @var MenuContextInterface
+     */
+    protected $context;
+
+    public function __construct(MenuContextInterface $context)
+    {
+        $this->context = $context;
+    }
+
+    /**
      * Create new empty instance of menu item
      *
      * @param  string $name
@@ -68,6 +78,8 @@ class MenuFactory implements FactoryInterface
             }
         }
 
+        $this->context->setContext($item, $options['routeParams']);
+
         return $item;
     }
 
@@ -93,9 +105,11 @@ class MenuFactory implements FactoryInterface
      */
     public function createFromArray(array $data)
     {
-        $name = $data['name'];
-        $item = $this->createItem($name, $data);
+        $item = $this->createItem($data['name'], $data);
+
         foreach ($data['children'] as $key => $child) {
+            $child['routeParams'] = $data['routeParams'];
+
             $item->addChild($this->createFromArray($child));
         }
 

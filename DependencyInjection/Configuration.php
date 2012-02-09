@@ -23,6 +23,11 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->scalarNode('generator_cache_class')
+                    ->defaultValue('%kernel.name%%kernel.environment%MenuTree')
+                ->end()
+                ->scalarNode('cache_dir')->defaultValue('%kernel.cache_dir%')->end()
+                ->scalarNode('debug')->defaultValue('%kernel.debug%')->end()
                 ->menuNode('route')->menuNodePlain()->end()
                 ->arrayNode('menu')
                     ->useAttributeAsKey('id')
