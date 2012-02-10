@@ -32,11 +32,6 @@ class MenuBuilder implements MenuBuilderInterface
     private $merger;
 
     /**
-     * @var string
-     */
-    private $currentUri;
-
-    /**
      * @var array
      */
     private $options;
@@ -49,13 +44,11 @@ class MenuBuilder implements MenuBuilderInterface
     public function __construct(
         MenuFactoryInterface     $factory,
         OptionMergerInterface    $merger,
-        Request                  $request,
         array                    $options
     ) {
         $this->factory     = $factory;
         $this->merger      = $merger;
         $this->options     = $options;
-        $this->currentUri  = $request->getRequestUri();
     }
 
     /**
@@ -76,7 +69,10 @@ class MenuBuilder implements MenuBuilderInterface
             ;
 
             if(!$cache || !$cache->isFresh()) {
-                $this->menuOptions = $this->merger->normalize($this->options);
+
+                $this->menuOptions = $this->merger->normalize(
+                    $this->options['tree'],
+                    $this->options['items']);
 
                 $cache->write('return ' . var_export($this->menuOptions, true) . ';');
             } else {
@@ -91,16 +87,18 @@ class MenuBuilder implements MenuBuilderInterface
      * {@inheritdoc}
      * @see Millwright\MenuBundle\Menu.MenuBuilderInterface::create()
      */
-    public function create($name, array $routeParams = array())
+    public function create($name,
+        array $defaultRouteParams = array(),
+        array $routeParams = array()
+    )
     {
         $options = $this->getMenuOptions($name);
         $factory = clone $this->factory;
 
-        $currentUri = null;
         $factory
+            ->setDefaultRouteParams($defaultRouteParams)
             ->setRouteParams($routeParams)
-            //->setSecurity($security ? $security : $this->security)
-            ->setCurrentUri($currentUri ? $currentUri : $this->currentUri);
+        ;
 
         return $factory->createFromArray($options);
     }

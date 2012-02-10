@@ -1,4 +1,12 @@
 <?php
+/**
+ * Normalize and merge menu options
+ *
+ * @author      Stefan Zerkalica <zerkalica@gmail.com>
+ * @category    Millwright
+ * @package     MenuBundle
+ * @subpackage  Config
+ */
 
 namespace Millwright\MenuBundle\Config;
 
@@ -8,6 +16,12 @@ use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Millwright\MenuBundle\Annotation\Menu;
 
+/**
+ * @author      Stefan Zerkalica <zerkalica@gmail.com>
+ * @category    Millwright
+ * @package     MenuBundle
+ * @subpackage  Config
+ */
 class OptionMerger implements OptionMergerInterface
 {
     /**
@@ -52,17 +66,6 @@ class OptionMerger implements OptionMergerInterface
             'route'               => null,
             'routeAbsolute'       => false,
         );
-    }
-
-    /**
-     * This params will be copied from parent to child item
-     * if not set in child
-     *
-     * @return array
-     */
-    protected function getInheritedParams()
-    {
-        return array('translateDomain', 'roles');
     }
 
     /**
@@ -147,14 +150,11 @@ class OptionMerger implements OptionMergerInterface
      * Loads and merge options from annotations and menu config:
      * 1. From @Menu, @Secure, @SecureParam annotations of method
      * 2. From millwright_menu:route section of config
-     * 3. From parent options item @see OptionMerger::getInheritedParams()
-     * 4. From @Menu, @Secure, @SecureParam annotations of class
-     * 5. Normalize empty params from array @see OptionMerger::getDefaultParams()
+     * 3. From @Menu, @Secure, @SecureParam annotations of class
+     * 4. Normalize empty params from array @see OptionMerger::getDefaultParams()
      *
-     * @see Millwright\MenuBundle\Config.OptionMergerInterface::merge()
      */
-    private function merge(array $options, array $parentOptions = array(),
-        array $routeOptions = array())
+    private function merge(array $options, array $routeOptions = array())
     {
         $classAnnotations = array();
         $arguments        = array();
@@ -170,31 +170,26 @@ class OptionMerger implements OptionMergerInterface
             'secureParams' => array('class' => null)
         );
         $name = $options['name'];
-        $options += array('route' => $name);
+        if (empty($options['uri'])) {
+            $options += array('route' => $name);
+            if ($options['route']) {
+                $method = $this->getActionMethod($options['route']);
+                if ($method) {
+                    foreach ($method->getParameters() as $argument) {
+                        $arguments[$argument->getName()] = $argument;
+                    }
 
-        if ($options['route']) {
-            $method = $this->getActionMethod($options['route']);
-            if ($method) {
-                foreach ($method->getParameters() as $argument) {
-                    $arguments[$argument->getName()] = $argument;
+                    $annotations = $this->reader->getMethodAnnotations($method);
+                    $options     = $this->mergeAnnotations($options, $annotations, $arguments);
+
+                    $class       = $method->getDeclaringClass();
+                    $classAnnotations = $this->reader->getClassAnnotations($class);
                 }
-
-                $annotations = $this->reader->getMethodAnnotations($method);
-                $options     = $this->mergeAnnotations($options, $annotations, $arguments);
-
-                $class       = $method->getDeclaringClass();
-                $classAnnotations = $this->reader->getClassAnnotations($class);
             }
         }
 
         if (isset($routeOptions[$name])) {
             $options += $routeOptions[$name];
-        }
-
-        foreach($this->getInheritedParams() as $param) {
-            if(!empty($parentOptions[$param]) && !isset($options[$param])) {
-                $options[$param] = $parentOptions[$param];
-            }
         }
 
         $options = $this->mergeAnnotations($options, $classAnnotations, $arguments);
@@ -204,19 +199,16 @@ class OptionMerger implements OptionMergerInterface
         return $options;
     }
 
-    private function _merge(array $options, array $parentOptions = array(),
-        array $routeOptions = array())
+    private function _merge(array $options, array $routeOptions = array())
     {
-        $options += array('name' => null);
-        if (!empty($options['name'])) {
-            $options = $this->merge($options, $parentOptions, $routeOptions);
-        } else {
-            $options['name'] = null;
+        $options += array('name' => null, 'children' => array());
+        if ($options['name']) {
+            $options = $this->merge($options, $routeOptions);
         }
 
         foreach($options['children'] as $name => & $child) {
             $child += array('name' => $name);
-            $child = $this->_merge($child, $options, $routeOptions);
+            $child = $this->_merge($child, $routeOptions);
         }
 
         return $options;
@@ -226,11 +218,11 @@ class OptionMerger implements OptionMergerInterface
      * {@inheritdoc}
      * @see Millwright\MenuBundle\Config.OptionMergerInterface::normalize()
      */
-    public function normalize(array $options)
+    public function normalize(array $hierarchy, array $parameters)
     {
         $result = array();
-        foreach($options['menu'] as $key => $menu) {
-            $result[$key] = $this->_merge($menu, array(), $options['route']);
+        foreach($hierarchy as $key => $menu) {
+            $result[$key] = $this->_merge($menu, $parameters);
         }
 
         return $result;

@@ -15,8 +15,9 @@ class MenuNodeDefinition extends ArrayNodeDefinition
         }
 
         return $this->beginTree()
-                ->menuNode('children')->menuNodeHierarhy($depth - 1)->end()
-            ->end();
+                ->menuNode('children')->menuNodeHierarhy($depth - 1)
+                    ->end() //children
+                ->end(); // prototype
     }
 
     private function beginTree()
@@ -51,8 +52,10 @@ class MenuNodeDefinition extends ArrayNodeDefinition
 
     public function menuNodePlain()
     {
-        return $this->beginTree()
-            ->end()->end();
+        return
+            $this->beginTree()
+                ->end() //children
+            ->end(); //prototype
     }
 
 }

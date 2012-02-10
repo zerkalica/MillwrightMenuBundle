@@ -21,23 +21,18 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('millwright_menu', 'array', new MenuTreeBuilder());
 
-        $rootNode
+        $node = $rootNode
             ->children()
                 ->scalarNode('generator_cache_class')
                     ->defaultValue('%kernel.name%%kernel.environment%MenuTree')
                 ->end()
                 ->scalarNode('cache_dir')->defaultValue('%kernel.cache_dir%')->end()
                 ->scalarNode('debug')->defaultValue('%kernel.debug%')->end()
-                ->menuNode('route')->menuNodePlain()->end()
-                ->arrayNode('menu')
-                    ->useAttributeAsKey('id')
-                    ->prototype('array')
-                    ->children()
-                        ->scalarNode('id')->end()
-                        ->scalarNode('translateDomain')->end()
-                        ->scalarNode('roles')->end()
-                        ->menuNode('children')->menuNodeHierarhy()
-                    ->end()
+                ->menuNode('items')
+                    ->menuNodePlain()
+                ->end()
+                ->menuNode('tree')
+                    ->menuNodeHierarhy()
                 ->end()
             ->end()
         ;

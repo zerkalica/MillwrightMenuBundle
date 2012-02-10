@@ -163,4 +163,22 @@ class MenuItem extends KnpMenuItem implements MenuItemInterface
     {
         return $this->translateParameters;
     }
+
+    /**
+     * {@inheritdoc}
+     * @see Knp\Menu.MenuItem::addChild()
+     *
+     * Our menu items created by menu factory and $child always MenuItemInterface.
+     * Factory sets current uri and other variable parts of menu item options
+     * We don't need to set it here
+     */
+    public function addChild($child, array $options = array())
+    {
+        $child->setParent($this);
+
+        $this->children[$child->getName()] = $child;
+
+        return $child;
+    }
+
 }

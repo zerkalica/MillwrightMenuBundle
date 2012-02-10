@@ -1,6 +1,6 @@
 <?php
 /**
- * Menu factory, support security context and routes
+ * Menu factory, supports menu context
  *
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
  * @category    Millwright
@@ -23,17 +23,17 @@ class MenuFactory implements MenuFactoryInterface
     /**
      * @var MenuContextInterface
      */
-    private $context;
+    protected $context;
 
     /**
      * @var array
      */
-    private $routeParams = array();
+    protected $defaultRouteParams = array();
 
     /**
-     * @var string
+     * @var array
      */
-    private $currentUri;
+    protected $routeParams = array();
 
     public function __construct(MenuContextInterface $context)
     {
@@ -51,31 +51,20 @@ class MenuFactory implements MenuFactoryInterface
         return new MenuItem($name, $this);
     }
 
-    private function getDefaultParams()
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::setDefaultRouteParams()
+     */
+    public function setDefaultRouteParams(array $defaultRouteParams)
     {
-        return array(
-            'uri'                => null,
-            'label'              => null,
-            'name'               => null,
-            'attributes'         => array(),
-            'linkAttributes'     => array(),
-            'childrenAttributes' => array(),
-            'labelAttributes'    => array(),
-            'display'            => true,
-            'displayChildren'    => true,
+        $this->defaultRouteParams = $defaultRouteParams;
 
-            'translateDomain'    => null,
-            'translateParameters' => array(),
-            'secureParams'        => array(),
-            'roles'               => array(),
-            'route'               => null,
-            'routeAbsolute'       => false,
-        );
+        return $this;
     }
 
     /**
      * {@inheritdoc}
-     * @see MenuFactoryInterface::setRouteParams()
+     * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::setRouteParams()
      */
     public function setRouteParams(array $routeParams)
     {
@@ -84,34 +73,29 @@ class MenuFactory implements MenuFactoryInterface
         return $this;
     }
 
-
-    /**
-     * {@inheritdoc}
-     * @see MenuFactoryInterface::setRouteParams()
-     */
-    public function setCurrentUri($currentUri)
-    {
-        $this->currentUri = $currentUri;
-
-        return $this;
-    }
-
     /**
      * {@inheritdoc}
      * @see Knp\Menu.FactoryInterface::createItem()
+     *
+     * @return MenuItemInterface
      */
     public function createItem($name, array $options = array())
     {
         $item    = $this->createItemInstance($name);
 
         if ($name) {
+            unset($options['children']);
             foreach ($options as $key => $default) {
                 $method = 'set' . ucfirst($key);
                 $item->$method($options[$key]);
             }
         }
 
-        $this->context->setContext($item, $this->routeParams);
+        $params = isset($this->routeParams[$name])
+            ? $this->routeParams[$name]
+            : $this->defaultRouteParams;
+
+        $this->context->setContext($item, $params);
 
         return $item;
     }

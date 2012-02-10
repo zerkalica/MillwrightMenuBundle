@@ -1,6 +1,7 @@
 <?php
 /**
- * Menu builder
+ * Menu context
+ * Sets to menu item current uri, item visibility by security, generate uri by route parameters
  *
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
  * @category    Millwright
@@ -22,23 +23,29 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
  */
 class MenuContext implements MenuContextInterface
 {
-
     /**
      * @var RouterInterface
      */
-    private $router;
+    protected $router;
 
     /**
      * @var SecurityContextInterface
      */
-    private $security;
+    protected $security;
+
+    /**
+     * @var string
+     */
+    protected $currentUri;
 
     public function __construct(
         RouterInterface          $router,
-        SecurityContextInterface $security
+        SecurityContextInterface $security,
+        Request                  $request
     ) {
         $this->router      = $router;
         $this->security    = $security;
+        $this->currentUri  = $request->getRequestUri();
     }
 
     /**
@@ -85,6 +92,7 @@ class MenuContext implements MenuContextInterface
         }
 
         $item->setDisplay($display);
+        $item->setCurrentUri($this->currentUri);
 
         if ($recursive) {
             foreach($item->getChildren() as $child) {
