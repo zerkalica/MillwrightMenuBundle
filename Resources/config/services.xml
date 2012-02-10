@@ -14,7 +14,6 @@
     <services>
 
         <service id="millwright_menu.context" class="%millwright_menu.context.class%" scope="request">
-            <argument type="service" id="request" />
             <argument type="service" id="router" />
             <argument type="service" id="security.context" />
         </service>
@@ -31,6 +30,7 @@
         <service id="millwright_menu.builder" class="%millwright_menu.menu_builder.class%" scope="request">
             <argument type="service" id="millwright_menu.factory" />
             <argument type="service" id="millwright_menu.merger" />
+            <argument type="service" id="request" />
             <argument type="collection">
                 <argument key="generator_cache_class">%millwright_menu.generator_cache_class%</argument>
                 <argument key="cache_dir">%millwright_menu.cache_dir%</argument>

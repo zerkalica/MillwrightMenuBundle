@@ -22,10 +22,6 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
  */
 class MenuContext implements MenuContextInterface
 {
-    /**
-     * @var string
-     */
-    private $requestUri;
 
     /**
      * @var RouterInterface
@@ -38,11 +34,9 @@ class MenuContext implements MenuContextInterface
     private $security;
 
     public function __construct(
-        Request                  $request,
         RouterInterface          $router,
         SecurityContextInterface $security
     ) {
-        $this->requestUri  = $request->getRequestUri();
         $this->router      = $router;
         $this->security    = $security;
     }
@@ -91,7 +85,6 @@ class MenuContext implements MenuContextInterface
         }
 
         $item->setDisplay($display);
-        $item->setCurrentUri($this->requestUri);
 
         if ($recursive) {
             foreach($item->getChildren() as $child) {

@@ -9,8 +9,8 @@
  */
 namespace Millwright\MenuBundle\Menu;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Config\ConfigCache;
-use Knp\Menu\FactoryInterface;
 use Millwright\MenuBundle\Config\OptionMergerInterface;
 
 /**
@@ -22,7 +22,7 @@ use Millwright\MenuBundle\Config\OptionMergerInterface;
 class MenuBuilder implements MenuBuilderInterface
 {
     /**
-     * @var FactoryInterface
+     * @var MenuFactoryInterface
      */
     private $factory;
 
@@ -30,6 +30,11 @@ class MenuBuilder implements MenuBuilderInterface
      * @var OptionMergerInterface
      */
     private $merger;
+
+    /**
+     * @var string
+     */
+    private $currentUri;
 
     /**
      * @var array
@@ -42,15 +47,23 @@ class MenuBuilder implements MenuBuilderInterface
     private $menuOptions;
 
     public function __construct(
-        FactoryInterface         $factory,
+        MenuFactoryInterface     $factory,
         OptionMergerInterface    $merger,
+        Request                  $request,
         array                    $options
     ) {
         $this->factory     = $factory;
         $this->merger      = $merger;
         $this->options     = $options;
+        $this->currentUri  = $request->getRequestUri();
     }
 
+    /**
+     * Get static part of menu item options
+     *
+     * @param  string $name menu container name
+     * @return array
+     */
     private function getMenuOptions($name)
     {
         if(null === $this->menuOptions) {
@@ -81,9 +94,14 @@ class MenuBuilder implements MenuBuilderInterface
     public function create($name, array $routeParams = array())
     {
         $options = $this->getMenuOptions($name);
-        $options['routeParams'] = $routeParams;
-        $menu    = $this->factory->createFromArray($options);
+        $factory = clone $this->factory;
 
-        return $menu;
+        $currentUri = null;
+        $factory
+            ->setRouteParams($routeParams)
+            //->setSecurity($security ? $security : $this->security)
+            ->setCurrentUri($currentUri ? $currentUri : $this->currentUri);
+
+        return $factory->createFromArray($options);
     }
 }

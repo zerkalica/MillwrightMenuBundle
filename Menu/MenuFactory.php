@@ -10,7 +10,6 @@
 
 namespace Millwright\MenuBundle\Menu;
 
-use Knp\Menu\FactoryInterface;
 use Knp\Menu\NodeInterface;
 
 /**
@@ -19,12 +18,22 @@ use Knp\Menu\NodeInterface;
  * @package     MenuBundle
  * @subpackage  Menu
  */
-class MenuFactory implements FactoryInterface
+class MenuFactory implements MenuFactoryInterface
 {
     /**
      * @var MenuContextInterface
      */
-    protected $context;
+    private $context;
+
+    /**
+     * @var array
+     */
+    private $routeParams = array();
+
+    /**
+     * @var string
+     */
+    private $currentUri;
 
     public function __construct(MenuContextInterface $context)
     {
@@ -66,19 +75,43 @@ class MenuFactory implements FactoryInterface
 
     /**
      * {@inheritdoc}
+     * @see MenuFactoryInterface::setRouteParams()
+     */
+    public function setRouteParams(array $routeParams)
+    {
+        $this->routeParams = $routeParams;
+
+        return $this;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     * @see MenuFactoryInterface::setRouteParams()
+     */
+    public function setCurrentUri($currentUri)
+    {
+        $this->currentUri = $currentUri;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      * @see Knp\Menu.FactoryInterface::createItem()
      */
     public function createItem($name, array $options = array())
     {
         $item    = $this->createItemInstance($name);
+
         if ($name) {
-            foreach ($this->getDefaultParams() as $key => $default) {
+            foreach ($options as $key => $default) {
                 $method = 'set' . ucfirst($key);
                 $item->$method($options[$key]);
             }
         }
 
-        $this->context->setContext($item, $options['routeParams']);
+        $this->context->setContext($item, $this->routeParams);
 
         return $item;
     }
@@ -89,8 +122,7 @@ class MenuFactory implements FactoryInterface
      */
     public function createFromNode(NodeInterface $node)
     {
-        $item    = $this->createItem($node->getName(), $options);
-
+        $item = $this->createItem($node->getName(), $node->getOptions());
         /* @var $childNode NodeInterface */
         foreach ($node->getChildren() as $childNode) {
             $item->addChild($this->createFromNode($childNode));
@@ -106,10 +138,7 @@ class MenuFactory implements FactoryInterface
     public function createFromArray(array $data)
     {
         $item = $this->createItem($data['name'], $data);
-
         foreach ($data['children'] as $key => $child) {
-            $child['routeParams'] = $data['routeParams'];
-
             $item->addChild($this->createFromArray($child));
         }
 

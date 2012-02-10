@@ -62,7 +62,7 @@ class OptionMerger implements OptionMergerInterface
      */
     protected function getInheritedParams()
     {
-        return array('translateDomain', 'routeParameters', 'roles');
+        return array('translateDomain', 'roles');
     }
 
     /**
@@ -198,8 +198,6 @@ class OptionMerger implements OptionMergerInterface
         }
 
         $options = $this->mergeAnnotations($options, $classAnnotations, $arguments);
-
-        $options += array('routeParameters' => array());
 
         $options += $this->getDefaultParams();
 
