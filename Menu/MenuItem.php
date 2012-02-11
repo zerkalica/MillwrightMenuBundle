@@ -1,7 +1,11 @@
 <?php
 /**
- * @author   Stefan Zerkalica <zerkalica@gmail.com>
- * @category Millwright
+ * Menu item class
+ *
+ * @author     Stefan Zerkalica <zerkalica@gmail.com>
+ * @category   Millwright
+ * @package    MenuBundle
+ * @subpackage Menu
  */
 namespace Millwright\MenuBundle\Menu;
 
@@ -9,8 +13,9 @@ use Knp\Menu\MenuItem as KnpMenuItem;
 
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
- * @category    Millwright
- * @package     MenuBundle
+ * @category   Millwright
+ * @package    MenuBundle
+ * @subpackage Menu
  */
 class MenuItem extends KnpMenuItem implements MenuItemInterface
 {
@@ -22,7 +27,7 @@ class MenuItem extends KnpMenuItem implements MenuItemInterface
     /**
      * @var array
      */
-    protected $translateParameters;
+    protected $translateParameters = array();
 
     /**
      * @var string
@@ -32,17 +37,27 @@ class MenuItem extends KnpMenuItem implements MenuItemInterface
     /**
      * @var bool
      */
-    protected $routeAbsolute;
+    protected $routeAbsolute = false;
 
     /**
      * @var array
      */
-    protected $roles;
+    protected $roles = array();
 
     /**
      * @var array
      */
-    protected $secureParams;
+    protected $secureParams = array();
+
+    /**
+     * @var bool
+     */
+    protected $showAsText = false;
+
+    /**
+     * @var bool
+     */
+    protected $showNonAuthorized = false;
 
     /**
      * {@inheritdoc}
@@ -181,4 +196,43 @@ class MenuItem extends KnpMenuItem implements MenuItemInterface
         return $child;
     }
 
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setShowNonAuthorized()
+     */
+    public function setShowNonAuthorized($showNonAuthorized)
+    {
+        $this->showNonAuthorized = $showNonAuthorized;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getShowNonAuthorized()
+     */
+    public function getShowNonAuthorized()
+    {
+        return $this->showNonAuthorized;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setShowAsText()
+     */
+    public function setShowAsText($showAsText)
+    {
+        $this->showAsText = $showAsText;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getShowAsText()
+     */
+    public function getShowAsText()
+    {
+        return $this->showAsText;
+    }
 }

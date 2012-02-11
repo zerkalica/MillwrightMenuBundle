@@ -43,10 +43,6 @@ class OptionMerger implements OptionMergerInterface
         $this->reader  = $reader;
     }
 
-    /**
-     * {@inheritdoc}
-     * @see Millwright\MenuBundle\Config.OptionMergerInterface::getDefaultParams()
-     */
     protected function getDefaultParams()
     {
         return array(
@@ -65,6 +61,8 @@ class OptionMerger implements OptionMergerInterface
             'roles'               => array(),
             'route'               => null,
             'routeAbsolute'       => false,
+            'showNonAuthorized'   => false,
+            'showAsText'          => false,
         );
     }
 
@@ -136,7 +134,7 @@ class OptionMerger implements OptionMergerInterface
     {
         $options = array();
         foreach((array) $annotation as $key => $value) {
-            if ($value) {
+            if ($value !== null) {
                 $options[$key] = $value;
             }
         }

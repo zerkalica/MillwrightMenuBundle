@@ -13,19 +13,20 @@ final class Menu
 {
     public $label;
     public $translateDomain;
-    public $translateParams = array();
+    public $translateParameters;
+
+    public $name;
+    public $showNonAuthorized;
+    public $showAsText;
 
     public function __construct(array $values)
     {
-        $values += array(
-            'label'           => null,
-            'translateDomain' => null,
-            'translateParams' => array(),
-        );
-        $this->label  = $values['label'];
-        $this->translateDomain = $values['translateDomain'];
-        if ($values['translateParams']) {
-            $this->translateParams = array_map('trim', explode(',', $values['translateParams']));
+        foreach($values as $property => $value) {
+            $this->$property = $value;
+        }
+
+        if ($this->translateParameters) {
+            $this->translateParameters = array_map('trim', explode(',', $this->translateParameters));
         }
     }
 }

@@ -108,11 +108,20 @@ class MenuFactory implements MenuFactoryInterface
         $route = $item->getRoute();
         if ($route) {
             $uri = $this->router->generate(
-                    $route,
-                    $routeParameters,
-                    $item->getRouteAbsolute()
+                $route,
+                $routeParameters,
+                $item->getRouteAbsolute()
             );
             $item->setUri($uri);
+        }
+
+        if(!$display ) {
+            if ($item->getShowNonAuthorized() && !$this->security->getToken()) {
+                $display = true;
+            } else if($item->getShowAsText()) {
+                $display = true;
+                $item->setUri(null);
+            }
         }
 
         $item->setDisplay($display);

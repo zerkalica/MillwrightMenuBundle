@@ -2,17 +2,20 @@
 /**
  * Translate domain interface added to Knp ItemInterface
  *
- * @author   Stefan Zerkalica <zerkalica@gmail.com>
- * @category Millwright
+ * @author     Stefan Zerkalica <zerkalica@gmail.com>
+ * @category   Millwright
+ * @package    MenuBundle
+ * @subpackage Menu
  */
 namespace Millwright\MenuBundle\Menu;
 
 use Knp\Menu\ItemInterface;
 
 /**
- * @author      Stefan Zerkalica <zerkalica@gmail.com>
- * @category    Millwright
- * @package     MenuBundle
+ * @author     Stefan Zerkalica <zerkalica@gmail.com>
+ * @category   Millwright
+ * @package    MenuBundle
+ * @subpackage Menu
  */
 interface MenuItemInterface extends ItemInterface
 {
@@ -85,14 +88,14 @@ interface MenuItemInterface extends ItemInterface
     public function setRouteAbsolute($routeAbsolute);
 
     /**
-     * Get routeAbsolute
+     * Get route absolute
      *
      * @return bool
      */
     public function getRouteAbsolute();
 
     /**
-     * Set secureParams
+     * Set secure params
      *
      * @param  array $secureParams
      * @return MenuItemInteface
@@ -100,9 +103,41 @@ interface MenuItemInterface extends ItemInterface
     public function setSecureParams(array $secureParams);
 
     /**
-     * Get secureParams
+     * Get secure params
      *
      * @return array
      */
     public function getSecureParams();
+
+    /**
+     * Set show non authorized
+     * If access denied and not authorized - show link
+     *
+     * @param  bool $showNonAuthorized
+     * @return MenuItem
+     */
+    public function setShowNonAuthorized($showNonAuthorized);
+
+    /**
+     * Get show non authorized state
+     *
+     * @return bool
+     */
+    public function getShowNonAuthorized();
+
+    /**
+     * Set show as text
+     * if access denied - show text
+     *
+     * @param  bool $showAsText
+     * @return MenuItemInterface
+     */
+    public function setShowAsText($showAsText);
+
+    /**
+     * Get show as text state
+     *
+     * @return bool
+     */
+    public function getShowAsText();
 }
