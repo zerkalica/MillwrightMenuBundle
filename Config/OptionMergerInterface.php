@@ -7,10 +7,9 @@ interface OptionMergerInterface
     /**
      * Normalize all menus options
      *
-     * @param  array $hierarchy menu hierarchy
-     * @param  array $parameters plain dictionary of parameters
+     * @param  array $options 'tree' and 'parameters' menu hierarchy
      *
      * @return array merged and normalized result
      */
-    public function normalize(array $hierarchy, array $parameters);
+    public function normalize(array $menuOptions);
 }

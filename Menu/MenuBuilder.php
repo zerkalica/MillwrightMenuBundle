@@ -41,14 +41,42 @@ class MenuBuilder implements MenuBuilderInterface
      */
     private $menuOptions;
 
+    /**
+     * @var array
+     */
+    private $compiledOptions;
+
+
     public function __construct(
-        MenuFactoryInterface     $factory,
-        OptionMergerInterface    $merger,
-        array                    $options
+        MenuFactoryInterface  $factory,
+        OptionMergerInterface $merger,
+        array                 $options,
+        array                 $menuOptions
     ) {
         $this->factory     = $factory;
         $this->merger      = $merger;
         $this->options     = $options;
+        $this->menuOptions = $menuOptions;
+    }
+
+    private function loadCache()
+    {
+        if(null === $this->compiledOptions) {
+            $class = $this->options['generator_cache_class'];
+            $cache = $this->options['cache_dir']
+                ? new ConfigCache($this->options['cache_dir'] . '/'
+                    . $class . '.php',
+                    $this->options['debug'])
+                : null
+            ;
+
+            if(!$cache || !$cache->isFresh()) {
+                $this->compiledOptions = $this->merger->normalize($this->menuOptions);
+                $cache->write('return ' . var_export($this->compiledOptions, true) . ';');
+            } else {
+                $this->compiledOptions = require_once $cache;
+            }
+        }
     }
 
     /**
@@ -59,35 +87,29 @@ class MenuBuilder implements MenuBuilderInterface
      */
     private function getMenuOptions($name)
     {
-        if(null === $this->menuOptions) {
-            $class = $this->options['generator_cache_class'];
-            $cache = $this->options['cache_dir']
-                ? new ConfigCache($this->options['cache_dir'] . '/'
-                    . $class . '.php',
-                    $this->options['debug'])
-                : null
-            ;
+        $this->loadCache();
 
-            if(!$cache || !$cache->isFresh()) {
+        return $this->compiledOptions['tree'][$name];
+    }
 
-                $this->menuOptions = $this->merger->normalize(
-                    $this->options['tree'],
-                    $this->options['items']);
+    /**
+     * Get menu item options
+     *
+     * @param  string $name menu item name
+     * @return array
+     */
+    private function getLinkOptions($name)
+    {
+        $this->loadCache();
 
-                $cache->write('return ' . var_export($this->menuOptions, true) . ';');
-            } else {
-                $this->menuOptions = require_once $cache;
-            }
-        }
-
-        return $this->menuOptions[$name];
+        return $this->compiledOptions['items'][$name];
     }
 
     /**
      * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuBuilderInterface::create()
+     * @see Millwright\MenuBundle\Menu.MenuBuilderInterface::createMenu()
      */
-    public function create($name,
+    public function createMenu($name,
         array $defaultRouteParams = array(),
         array $routeParams = array()
     )
@@ -101,5 +123,22 @@ class MenuBuilder implements MenuBuilderInterface
         ;
 
         return $factory->createFromArray($options);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuBuilderInterface::createLink()
+     */
+    public function createLink($name, array $defaultRouteParams = array())
+    {
+        $options = $this->getLinkOptions($name);
+        $factory = clone $this->factory;
+
+        $factory
+            ->setDefaultRouteParams($defaultRouteParams)
+            ->setRouteParams(array())
+        ;
+
+        return $factory->createItem($name, $options);
     }
 }

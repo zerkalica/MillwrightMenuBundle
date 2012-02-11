@@ -149,82 +149,78 @@ class OptionMerger implements OptionMergerInterface
      *
      * Loads and merge options from annotations and menu config:
      * 1. From @Menu, @Secure, @SecureParam annotations of method
-     * 2. From millwright_menu:route section of config
+     * 2. From millwright_menu:items section of config
      * 3. From @Menu, @Secure, @SecureParam annotations of class
      * 4. Normalize empty params from array @see OptionMerger::getDefaultParams()
      *
+     * @param  array $options
+     * @param  array $parameters
+     * @return void
      */
-    private function merge(array $options, array $routeOptions = array())
+    private function merge(array & $options, array & $parameters)
     {
-        $classAnnotations = array();
-        $arguments        = array();
+        $options += array(
+            'name' => null,
+            'children' => array(),
+            'secureParams' => array('class' => null)
+        );
 
         if (empty($options['roles'])) {
             //MenuNodeDefinition uses beforeNormalization, roles always exists
             unset($options['roles']);
         }
 
-        $options += array(
-            'name' => null,
-            'children' => array(),
-            'secureParams' => array('class' => null)
-        );
         $name = $options['name'];
-        if (empty($options['uri'])) {
-            $options += array('route' => $name);
-            if ($options['route']) {
-                $method = $this->getActionMethod($options['route']);
-                if ($method) {
-                    foreach ($method->getParameters() as $argument) {
-                        $arguments[$argument->getName()] = $argument;
+        if($name) {
+            $classAnnotations = array();
+            $arguments        = array();
+
+            if (empty($options['uri'])) {
+                $options += array('route' => $name);
+                if ($options['route']) {
+                    $method = $this->getActionMethod($options['route']);
+                    if ($method) {
+                        foreach ($method->getParameters() as $argument) {
+                            $arguments[$argument->getName()] = $argument;
+                        }
+
+                        $annotations = $this->reader->getMethodAnnotations($method);
+                        $options     = $this->mergeAnnotations($options, $annotations, $arguments);
+
+                        $class       = $method->getDeclaringClass();
+                        $classAnnotations = $this->reader->getClassAnnotations($class);
                     }
-
-                    $annotations = $this->reader->getMethodAnnotations($method);
-                    $options     = $this->mergeAnnotations($options, $annotations, $arguments);
-
-                    $class       = $method->getDeclaringClass();
-                    $classAnnotations = $this->reader->getClassAnnotations($class);
                 }
             }
-        }
 
-        if (isset($routeOptions[$name])) {
-            $options += $routeOptions[$name];
-        }
+            if (isset($parameters[$name])) {
+                $options += $parameters[$name];
+            }
 
-        $options = $this->mergeAnnotations($options, $classAnnotations, $arguments);
+            $options = $this->mergeAnnotations($options, $classAnnotations, $arguments);
 
-        $options += $this->getDefaultParams();
+            $options += $this->getDefaultParams();
 
-        return $options;
-    }
-
-    private function _merge(array $options, array $routeOptions = array())
-    {
-        $options += array('name' => null, 'children' => array());
-        if ($options['name']) {
-            $options = $this->merge($options, $routeOptions);
+            $parameters[$name] = $options;
+            unset($parameters[$name]['children']);
         }
 
         foreach($options['children'] as $name => & $child) {
             $child += array('name' => $name);
-            $child = $this->_merge($child, $routeOptions);
+            $this->merge($child, $parameters);
         }
-
-        return $options;
     }
 
     /**
      * {@inheritdoc}
      * @see Millwright\MenuBundle\Config.OptionMergerInterface::normalize()
      */
-    public function normalize(array $hierarchy, array $parameters)
+    public function normalize(array $menuOptions)
     {
-        $result = array();
-        foreach($hierarchy as $key => $menu) {
-            $result[$key] = $this->_merge($menu, $parameters);
+        foreach($menuOptions['tree'] as & $menu) {
+            $this->merge($menu, $menuOptions['items']);
         }
 
-        return $result;
+        return $menuOptions;
     }
 }

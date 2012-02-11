@@ -12,6 +12,12 @@ namespace Millwright\MenuBundle\Menu;
 
 use Knp\Menu\NodeInterface;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Core\SecurityContextInterface;
+
+
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
  * @category    Millwright
@@ -20,11 +26,6 @@ use Knp\Menu\NodeInterface;
  */
 class MenuFactory implements MenuFactoryInterface
 {
-    /**
-     * @var MenuContextInterface
-     */
-    protected $context;
-
     /**
      * @var array
      */
@@ -35,9 +36,29 @@ class MenuFactory implements MenuFactoryInterface
      */
     protected $routeParams = array();
 
-    public function __construct(MenuContextInterface $context)
-    {
-        $this->context = $context;
+    /**
+     * @var RouterInterface
+     */
+    protected $router;
+
+    /**
+     * @var SecurityContextInterface
+     */
+    protected $security;
+
+    /**
+     * @var string
+     */
+    protected $currentUri;
+
+    public function __construct(
+        RouterInterface          $router,
+        SecurityContextInterface $security,
+        Request                  $request
+    ) {
+        $this->router      = $router;
+        $this->security    = $security;
+        $this->currentUri  = $request->getRequestUri();
     }
 
     /**
@@ -49,6 +70,61 @@ class MenuFactory implements MenuFactoryInterface
     protected function createItemInstance($name)
     {
         return new MenuItem($name, $this);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuBuilderInterface::setContext()
+     */
+    public function setContext(MenuItemInterface $item,
+        array $routeParameters = array(),
+        $recursive = false)
+    {
+        $display = true;
+
+        $roles = $item->getRoles();
+        if($roles && !$this->security->isGranted($roles)) {
+            $display = false;
+        }
+
+        $secureParams = $item->getSecureParams();
+        if ($display && $secureParams) {
+            foreach($secureParams as $secureParam) {
+                $paramName   = $secureParam['name'];
+                if(isset($routeParameters[$paramName])) {
+                    $permissions = $secureParam['permissions'];
+                    $entityId    = $routeParameters[$paramName];
+                    $entityClass = $secureParam['class'];
+                    $object      = new ObjectIdentity($entityId, $entityClass);
+
+                    if(!$this->security->isGranted($permissions, $object)) {
+                        $display = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        $route = $item->getRoute();
+        if ($route) {
+            $uri = $this->router->generate(
+                    $route,
+                    $routeParameters,
+                    $item->getRouteAbsolute()
+            );
+            $item->setUri($uri);
+        }
+
+        $item->setDisplay($display);
+        $item->setCurrentUri($this->currentUri);
+
+        if ($recursive) {
+            foreach($item->getChildren() as $child) {
+                $this->setContext($child, $routeParameters, $recursive);
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -81,7 +157,7 @@ class MenuFactory implements MenuFactoryInterface
      */
     public function createItem($name, array $options = array())
     {
-        $item    = $this->createItemInstance($name);
+        $item = $this->createItemInstance($name);
 
         if ($name) {
             unset($options['children']);
@@ -95,7 +171,7 @@ class MenuFactory implements MenuFactoryInterface
             ? $this->routeParams[$name]
             : $this->defaultRouteParams;
 
-        $this->context->setContext($item, $params);
+        $this->setContext($item, $params);
 
         return $item;
     }

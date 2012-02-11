@@ -17,7 +17,7 @@ use Knp\Menu\FactoryInterface;
  * @package    MenuBundle
  * @subpackage Menu
  */
-interface MenuFactoryInterface extends FactoryInterface
+interface MenuFactoryInterface extends FactoryInterface, MenuContextInterface
 {
     /**
      * Set route params

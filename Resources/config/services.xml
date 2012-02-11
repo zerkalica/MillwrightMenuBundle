@@ -8,19 +8,14 @@
         <parameter key="millwright_menu.factory.class">Millwright\MenuBundle\Menu\MenuFactory</parameter>
         <parameter key="millwright_menu.main.class">Millwright\MenuBundle\Menu\MenuItem</parameter>
         <parameter key="millwright_menu.merger.class">Millwright\MenuBundle\Config\OptionMerger</parameter>
-        <parameter key="millwright_menu.context.class">Millwright\MenuBundle\Menu\MenuContext</parameter>
     </parameters>
 
     <services>
 
-        <service id="millwright_menu.context" class="%millwright_menu.context.class%" scope="request">
+        <service id="millwright_menu.factory" class="%millwright_menu.factory.class%" scope="request">
             <argument type="service" id="router" />
             <argument type="service" id="security.context" />
             <argument type="service" id="request" />
-        </service>
-
-        <service id="millwright_menu.factory" class="%millwright_menu.factory.class%" scope="request">
-            <argument type="service" id="millwright_menu.context" />
         </service>
 
         <service id="millwright_menu.merger" class="%millwright_menu.merger.class%" scope="request">
@@ -35,6 +30,8 @@
                 <argument key="generator_cache_class">%millwright_menu.generator_cache_class%</argument>
                 <argument key="cache_dir">%millwright_menu.cache_dir%</argument>
                 <argument key="debug">%millwright_menu.debug%</argument>
+            </argument>
+            <argument type="collection">
                 <argument key="items">%millwright_menu.items%</argument>
                 <argument key="tree">%millwright_menu.tree%</argument>
             </argument>
@@ -44,7 +41,7 @@
             id="millwright_menu.main"
             class="%millwright_menu.main.class%"
             factory-service="millwright_menu.builder"
-            factory-method="create"
+            factory-method="createMenu"
             scope="request"
         >
             <argument>main</argument>
