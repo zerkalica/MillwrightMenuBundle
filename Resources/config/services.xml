@@ -15,6 +15,7 @@
     </parameters>
 
     <services>
+    
         <service id="millwright_menu.twig.extension" class="%millwright_menu.twig.extension.class%" public="false">
             <tag name="twig.extension" />
             <argument type="service" id="millwright_menu.helper" />
@@ -23,6 +24,7 @@
         <service id="millwright_menu.helper" class="%millwright_menu.helper.class%" public="false">
             <argument type="service" id="knp_menu.renderer_provider" />
             <argument type="service" id="millwright_menu.builder" />
+            <argument>%millwright_menu.renderers%</argument>
         </service>
     
         <service id="millwright_menu.templating.helper" class="%millwright_menu.templating.helper.class%">

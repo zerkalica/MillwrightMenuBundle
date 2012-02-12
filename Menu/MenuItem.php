@@ -60,9 +60,9 @@ class MenuItem extends KnpMenuItem implements MenuItemInterface
     protected $showNonAuthorized = false;
 
     /**
-     * @var array
+     * @var string
      */
-    protected $rendererOptions = array();
+    protected $type;
 
     /**
      * {@inheritdoc}
@@ -243,21 +243,21 @@ class MenuItem extends KnpMenuItem implements MenuItemInterface
 
     /**
      * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setRenderer()
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setType()
      */
-    public function setRendererOptions(array $rendererOptions)
+    public function setType($type)
     {
-        $this->rendererOptions = $rendererOptions;
+        $this->type = $type;
 
         return $this;
     }
 
     /**
      * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getRenderer()
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getType()
      */
-    public function getRendererOptions()
+    public function getType()
     {
-        return $this->rendererOptions;
+        return $this->type;
     }
 }

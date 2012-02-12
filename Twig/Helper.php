@@ -2,6 +2,8 @@
 
 namespace Millwright\MenuBundle\Twig;
 
+use Millwright\MenuBundle\Renderer\RendererOptionsInterface;
+
 use Knp\Menu\ItemInterface;
 use Knp\Menu\Renderer\RendererProviderInterface;
 use Millwright\MenuBundle\Menu\MenuBuilderInterface;
@@ -15,15 +17,18 @@ class Helper
 {
     private $rendererProvider;
     private $builder;
+    private $rendererOptions;
 
     /**
      * @param RendererProviderInterface $rendererProvider
      * @param MenubuilderInterface $builder
+     * @param RendererOptionsInterface $rendererOptions
      */
-    public function __construct(RendererProviderInterface $rendererProvider, MenuBuilderInterface $builder)
+    public function __construct(RendererProviderInterface $rendererProvider, MenuBuilderInterface $builder, array $rendererOptions)
     {
         $this->rendererProvider = $rendererProvider;
         $this->builder          = $builder;
+        $this->rendererOptions  = $rendererOptions;
     }
 
     /**
@@ -99,7 +104,15 @@ class Helper
             $menu = $this->get($menu, $path, $routeParams);
         }
 
-        $options += $menu->getRendererOptions();
+
+        $type = $menu->getType();
+        if($type && isset($this->rendererOptions[$type])) {
+            $rendererParams = $this->rendererOptions[$type];
+            $options += $rendererParams['rendererOptions'];
+            if ($renderer === null) {
+                $renderer = $rendererParams['renderer'];
+            }
+        }
 
         return $this->rendererProvider->get($renderer)->render($menu, $options);
     }

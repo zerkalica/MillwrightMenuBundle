@@ -113,6 +113,12 @@ All menus configured in `millwright_menu` section of config.
 # app/config/menu.yml
 
 millwright_menu:
+    renderers:
+        navigation: #menu type id
+            renderer: null # custom renderer
+            rendererOptions:
+                template: MillwrightMenuBundle:Default:knp_menu.html.twig
+
     items: #menu items
         homepage: #menu name, used for route name, if it not set in options
             translateDomain: 'MillwrightMenuBundle'
@@ -145,10 +151,9 @@ millwright_menu:
                 fos_user_change_password: ~
 
         main: #main container
-            rendererOptions: #menu container render options
-                template: MillwrightMenuBundle:Default:knp_menu.html.twig
+            type: navigation # menu type id
             children:
-                homepage: {uri: 'http://www.google.com'} # redefine uri
+                homepage: ~
                 test: ~
                 fos_user_registration_register: ~
                 fos_user_profile_show:
@@ -213,18 +218,23 @@ We have a user collection, each user has acl permissions
 # app/config/menu.yml
 
 millwright_menu:
+    renderers:
+        <menu type>:
+            renderer: null # custom renderer
+            rendererOptions:
+                ...
     items:
         <key>:
             <item options> 
     ...
     tree:
         <menu_name>:
-            rendererOptions:
-                template:..
+            type: <menu type>
             children:
                 <items hierarchy>        
 ```
 
+`items` section:
 - `<key>` - used as default value for name, route and label
 - `uri` - uri string, if no route parameter set 
 - `label` - label text or translation string template
@@ -243,6 +253,14 @@ millwright_menu:
 - `routeAbsolute` - true for absolute url generation
 - `showNonAuthorized` - show for non-authorized users
 - `showAsText` - if authorized and no access to item, show item as text
+
+`tree` section
+- `type` - menu container type
+- `children` - submenu items
+
+`renderers` section:
+- `<menu type>` - menu container type
+- `renderer` - custom renderer
 - `rendererOptions` - options pass to menu renderer: template, etc
 
 ### Annotation options
@@ -319,10 +337,12 @@ Menu file:
 millwright_menu:
     tree:
         article_index_actions:
+            type: menu
             children:
                 article_create: ~
     
         article_actions:
+            type: actions
             children:
                 article_view: ~
                 article_edit: ~
