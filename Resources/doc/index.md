@@ -22,7 +22,7 @@ Main idea:
 
 2. Menu options consist of two parts: 
     - `items` describes each menu item: labels, route|uri, translate, role
-    - `tree` describes each menu container as hierarchy of menu items, renderer options  
+    - `tree` describes each menu container as hierarchy of menu items  
 
 3. `items` can be configured from config file and annotations in controller class and actions
 
@@ -39,7 +39,8 @@ Main idea:
 
 Add the following lines to your  `deps` file and then run `php bin/vendors
 install`:
-```
+
+```ini
 [KnpMenu]
     git=https://github.com/KnpLabs/KnpMenu.git
 
@@ -108,7 +109,6 @@ knp_menu:
 ## Creating menus
 
 All menus configured in `millwright_menu` section of config.
-Where `items`  
 
 ```yaml
 # app/config/menu.yml
@@ -162,7 +162,7 @@ millwright_menu:
 
 Items section can be configured from annotations:
 
-```php
+``` php
 # src/Application/Millwright/CoreBundle/Controller/DefaultController.php
 ...
 /**
@@ -185,12 +185,14 @@ class DefaultController extends Controller {
 <a name="context"></a>
 ## Using menu in templates
 
-`millwright_menu_render` supports additional route parameters array, the other options are equivalent to knp_menu_render options. 
+`millwright_menu_render` supports additional route parameters, the other options are equivalent to knp_menu_render. 
+
 ```jinja
 {{ millwright_menu_render('main', routeParams, options, renderer) }}
 ```
 
 ### Simpe usage
+
 ```jinja
 {{ millwright_menu_render('main') }}
 ```
