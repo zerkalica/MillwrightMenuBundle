@@ -1,6 +1,9 @@
 Using menus with MillwrightMenuBundle
 =====================================
 
+MillwrightMenuBundle extends base functionality of KnpMenuBundle and adds configuration, route, translation and security context support.
+Each link on the site is a part of configured menu container, which supports translation, role and acl-based security, route params.
+
 **Basic Docs**
 
 * [Features](#features)
@@ -12,10 +15,6 @@ Using menus with MillwrightMenuBundle
 
 <a name="features"></a>
 ## Features
-
-MillwrightMenuBundle extends base functionality of KnpMenuBundle and adds configuration, route, translation and security context support.
-Main idea: 
-    Each link on the site is a part of configured menu container, which supports translation, role and acl-based security, route params.
 
 1. It uses `JMSSecurityExtraBundle` annotations for configuring menu items visibility:
    role-based and acl-based security context support
@@ -219,14 +218,14 @@ millwright_menu:
             <item options> 
     ...
     tree:
-        rendererOptions:
-            template:..
-            
-        children:
-            <items hierarchy>        
+        <menu_name>:
+            rendererOptions:
+                template:..
+            children:
+                <items hierarchy>        
 ```
 
-- <key> - used as default value for name, route and label
+- `<key>` - used as default value for name, route and label
 - `uri` - uri string, if no route parameter set 
 - `label` - label text or translation string template
 - `name` - name of menu item, used as default for route
@@ -249,3 +248,83 @@ millwright_menu:
 ### Annotation options
 
 `@Menu` annotation supports: label, translateDomain, translateParameters, name, showNonAuthorized, showAsText options.
+
+## Example
+
+//@todo sandbox
+
+``` php
+# src/Application/Millwright/CoreBundle/Controller/ArticleController.php
+...
+/**
+ * @Menu(translateDomain="MillwrightMenuBundle")
+ */
+class ArticleController extends Controller 
+{
+    /**
+     * @Route("/articles", name="article_index")
+     * @Template()
+     * @Secure(roles="ROLE_USER")
+     */
+    public function indexAction() {
+        //
+    }
+
+    /**
+     * @Route("/article/create", name="article_create")
+     * @Template()
+     * @Secure(roles="ROLE_USER")
+     * @SecureParam(name="article", permissions="EDIT")
+     */
+    public function createAction() {
+        //
+    }
+
+    /**
+     * @Route("/article/{article}", name="article_view")
+     * @Secure(roles="ROLE_USER")
+     * @SecureParam(name="article", permissions="VIEW")
+     * @Template()
+     */
+    public function viewAction(Article $article) {
+        return array('article' => $article);
+    }
+    
+    /**
+     * @Route("/article/{article}/edit", name="article_edit")
+     * @Template()
+     * @Secure(roles="ROLE_USER")
+     * @SecureParam(name="article", permissions="EDIT")
+     */
+    public function editAction(Article $article) {
+        //
+    }
+    
+    /**
+     * @Route("/article/{article}/delete", name="article_delete")
+     * @Template()
+     * @Secure(roles="ROLE_USER")
+     * @SecureParam(name="article", permissions="DELETE")
+     */
+    public function deleteAction(Article $article) {
+        //
+    }
+}
+```
+Menu file:
+
+```yaml
+# app/config/menu.yml
+
+millwright_menu:
+    tree:
+        article_index_actions:
+            children:
+                article_create: ~
+    
+        article_actions:
+            children:
+                article_view: ~
+                article_edit: ~
+                article_delete: ~
+```
