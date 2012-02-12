@@ -31,6 +31,5 @@ class MillwrightMenuExtension extends Extension
             $key = $this->getAlias() . '.' . $key;
             $container->setParameter($key, $value);
         }
-
     }
 }

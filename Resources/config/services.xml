@@ -12,6 +12,8 @@
         <parameter key="millwright_menu.helper.class">Millwright\MenuBundle\Twig\Helper</parameter>
         <parameter key="millwright_menu.twig.extension.class">Millwright\MenuBundle\Twig\MenuExtension</parameter>
         <parameter key="millwright_menu.templating.helper.class">Millwright\MenuBundle\Templating\Helper\MenuHelper</parameter>
+        
+        <parameter key="millwright_menu.options.class">Millwright\MenuBundle\Menu\MenuOptions</parameter>
     </parameters>
 
     <services>
@@ -24,7 +26,7 @@
         <service id="millwright_menu.helper" class="%millwright_menu.helper.class%" public="false">
             <argument type="service" id="knp_menu.renderer_provider" />
             <argument type="service" id="millwright_menu.builder" />
-            <argument>%millwright_menu.renderers%</argument>
+            <argument type="collection" />
         </service>
     
         <service id="millwright_menu.templating.helper" class="%millwright_menu.templating.helper.class%">
@@ -51,12 +53,17 @@
                 <argument key="cache_dir">%millwright_menu.cache_dir%</argument>
                 <argument key="debug">%millwright_menu.debug%</argument>
             </argument>
+            <argument type="collection" />
+        </service>
+        
+        <service id="millwright_menu.options" class="%millwright_menu.options.class%">
+            <tag name="millwright_menu.menu_options" order="100"/>
             <argument type="collection">
                 <argument key="items">%millwright_menu.items%</argument>
                 <argument key="tree">%millwright_menu.tree%</argument>
+                <argument key="renderers">%millwright_menu.renderers%</argument>
             </argument>
         </service>
-
     </services>
 
 </container>

@@ -28,7 +28,6 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('cache_dir')->defaultValue('%kernel.cache_dir%')->end()
                 ->scalarNode('debug')->defaultValue('%kernel.debug%')->end()
-
                 ->arrayNode('renderers')
                     ->useAttributeAsKey('type')
                     ->prototype('array')
@@ -42,13 +41,13 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-
                 ->menuNode('items')
                     ->menuNodePlain()
                 ->end()
                 ->menuNode('tree')
                     ->menuNodeHierarhy()
                 ->end()
+
             ->end()
         ;
 
