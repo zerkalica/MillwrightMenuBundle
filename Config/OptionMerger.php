@@ -173,6 +173,10 @@ class OptionMerger implements OptionMergerInterface
             $classAnnotations = array();
             $arguments        = array();
 
+            if (isset($parameters[$name])) {
+                $options += $parameters[$name];
+            }
+
             if (empty($options['uri'])) {
                 $options += array('route' => $name);
                 if ($options['route']) {
@@ -189,10 +193,6 @@ class OptionMerger implements OptionMergerInterface
                         $classAnnotations = $this->reader->getClassAnnotations($class);
                     }
                 }
-            }
-
-            if (isset($parameters[$name])) {
-                $options += $parameters[$name];
             }
 
             $options = $this->mergeAnnotations($options, $classAnnotations, $arguments);

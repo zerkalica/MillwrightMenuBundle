@@ -55,16 +55,6 @@
             </argument>
         </service>
 
-        <service
-            id="millwright_menu.main"
-            class="%millwright_menu.main.class%"
-            factory-service="millwright_menu.builder"
-            factory-method="createMenu"
-            scope="request"
-        >
-            <argument>main</argument>
-            <tag name="knp_menu.menu" alias="main" />
-        </service>
     </services>
 
 </container>
