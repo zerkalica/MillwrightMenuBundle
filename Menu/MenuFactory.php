@@ -10,6 +10,8 @@
 
 namespace Millwright\MenuBundle\Menu;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Knp\Menu\NodeInterface;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -54,11 +56,13 @@ class MenuFactory implements MenuFactoryInterface
     public function __construct(
         RouterInterface          $router,
         SecurityContextInterface $security,
-        Request                  $request
+        ContainerInterface       $container
+        //Request                  $request
     ) {
         $this->router      = $router;
         $this->security    = $security;
-        $this->currentUri  = $request->getRequestUri();
+        //@todo fix this
+        $this->currentUri  = $container->get('request')->getRequestUri();
     }
 
     /**
