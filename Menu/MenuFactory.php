@@ -61,7 +61,7 @@ class MenuFactory implements MenuFactoryInterface
     ) {
         $this->router      = $router;
         $this->security    = $security;
-        //@todo fix this
+        //@todo fix this: can't use scope=request in service.xml, twig
         $this->currentUri  = $container->get('request')->getRequestUri();
     }
 
@@ -172,12 +172,10 @@ class MenuFactory implements MenuFactoryInterface
     {
         $item = $this->createItemInstance($name);
 
-        if ($name) {
-            unset($options['children']);
-            foreach ($options as $key => $default) {
-                $method = 'set' . ucfirst($key);
-                $item->$method($options[$key]);
-            }
+        unset($options['children']);
+        foreach ($options as $key => $default) {
+            $method = 'set' . ucfirst($key);
+            $item->$method($options[$key]);
         }
 
         $params = isset($this->routeParams[$name])

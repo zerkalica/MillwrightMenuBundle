@@ -60,6 +60,11 @@ class MenuItem extends KnpMenuItem implements MenuItemInterface
     protected $showNonAuthorized = false;
 
     /**
+     * @var array
+     */
+    protected $rendererOptions = array();
+
+    /**
      * {@inheritdoc}
      * @see Millwright\MenuBundle\Menu.MenuItemInterface::setSecureParams()
      */
@@ -234,5 +239,25 @@ class MenuItem extends KnpMenuItem implements MenuItemInterface
     public function getShowAsText()
     {
         return $this->showAsText;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setRenderer()
+     */
+    public function setRendererOptions(array $rendererOptions)
+    {
+        $this->rendererOptions = $rendererOptions;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getRenderer()
+     */
+    public function getRendererOptions()
+    {
+        return $this->rendererOptions;
     }
 }

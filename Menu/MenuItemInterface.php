@@ -140,4 +140,19 @@ interface MenuItemInterface extends ItemInterface
      * @return bool
      */
     public function getShowAsText();
+
+    /**
+     * Set renderer parameters
+     *
+     * @param  array $rendererOptions
+     * @return MenuItemInterface
+     */
+    public function setRendererOptions(array $rendererOptions);
+
+    /**
+     * Get renderer parameters
+     *
+     * @return array
+     */
+    public function getRendererOptions();
 }

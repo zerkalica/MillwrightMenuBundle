@@ -63,6 +63,7 @@ class OptionMerger implements OptionMergerInterface
             'routeAbsolute'       => false,
             'showNonAuthorized'   => false,
             'showAsText'          => false,
+            'rendererOptions'     => array(),
         );
     }
 

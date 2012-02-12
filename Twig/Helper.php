@@ -99,6 +99,8 @@ class Helper
             $menu = $this->get($menu, $path, $routeParams);
         }
 
+        $options += $menu->getRendererOptions();
+
         return $this->rendererProvider->get($renderer)->render($menu, $options);
     }
 }

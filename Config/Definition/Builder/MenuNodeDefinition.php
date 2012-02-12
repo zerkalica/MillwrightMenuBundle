@@ -46,7 +46,11 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                 ->scalarNode('display')->end()
                 ->scalarNode('displayChildren')->end()
                 ->scalarNode('route')->end()
-                ->arrayNode('routeParameters')->end()
+                ->arrayNode('rendererOptions')
+                    ->children()
+                        ->scalarNode('template')->end()
+                    ->end()
+                ->end()
                 ->booleanNode('routeAbsolute')->end()
                 ->booleanNode('showNonAuthorized')->end()
                 ->booleanNode('showAsText')->end();
