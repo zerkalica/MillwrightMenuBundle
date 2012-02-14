@@ -66,7 +66,7 @@ class MenuFactory implements MenuFactoryInterface
         $this->router      = $router;
         $this->security    = $security;
         //@todo fix this: can't use scope=request in service.xml, twig
-        $this->currentUri  = $container->get('request')->getRequestUri();
+        //$this->currentUri  = $container->get('request')->getRequestUri();
     }
 
     /**

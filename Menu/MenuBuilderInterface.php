@@ -40,4 +40,12 @@ interface MenuBuilderInterface
      * @return MenuItemInterface
      */
     public function createLink($name, array $routeParams = array());
+
+
+    /**
+     * Load cache
+     *
+     * @param string $cacheDir
+     */
+    public function loadCache($cacheDir);
 }

@@ -11,7 +11,6 @@ namespace Millwright\MenuBundle\Menu;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Config\ConfigCache;
-use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 
 use Millwright\MenuBundle\Config\OptionMergerInterface;
 
@@ -21,7 +20,7 @@ use Millwright\MenuBundle\Config\OptionMergerInterface;
  * @package     MenuBundle
  * @subpackage  Menu
  */
-class MenuBuilder implements MenuBuilderInterface, WarmableInterface
+class MenuBuilder implements MenuBuilderInterface
 {
     /**
      * @var MenuFactoryInterface
@@ -61,12 +60,16 @@ class MenuBuilder implements MenuBuilderInterface, WarmableInterface
         $this->menuOptions = $menuOptions;
     }
 
-    private function loadCache()
+    public function loadCache($cacheDir = null)
     {
         if(null === $this->compiledOptions) {
+            if(!$cacheDir) {
+                $cacheDir = $this->options['cache_dir'];
+            }
+
             $class = $this->options['generator_cache_class'];
-            $cache = $this->options['cache_dir']
-                ? new ConfigCache($this->options['cache_dir'] . '/'
+            $cache = $cacheDir
+                ? new ConfigCache($cacheDir . '/'
                     . $class . '.php',
                     $this->options['debug'])
                 : null
@@ -79,20 +82,6 @@ class MenuBuilder implements MenuBuilderInterface, WarmableInterface
                 $this->compiledOptions = require_once $cache;
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function warmUp($cacheDir)
-    {
-        $currentDir = $this->options['cache_dir'];
-        $this->options['cache_dir'] = $cacheDir;
-
-        // force cache generation
-        $this->loadCache();
-
-        $this->options['cache_dir'] = $currentDir;
     }
 
     /**

@@ -1,11 +1,24 @@
 <?php
+/**
+ * Menu cache warmer
+ *
+ * @author      Stefan Zerkalica <zerkalica@gmail.com>
+ * @category    Millwright
+ * @package     MenuBundle
+ * @subpackage  CacheWarmer
+ */
 
 namespace Millwright\MenuBundle\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Millwright\MenuBundle\Menu\MenuBuilderInterface;
 
+/**
+ * @author      Stefan Zerkalica <zerkalica@gmail.com>
+ * @category    Millwright
+ * @package     MenuBundle
+ * @subpackage  CacheWarmer
+ */
 class MenuCacheWarmer implements CacheWarmerInterface
 {
     /**
@@ -25,9 +38,7 @@ class MenuCacheWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
-        if ($this->menuBuilder instanceof WarmableInterface) {
-            $this->menuBuilder->warmUp($cacheDir);
-        }
+        $this->menuBuilder->loadCache($cacheDir);
     }
 
     /**
