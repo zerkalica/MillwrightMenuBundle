@@ -11,6 +11,8 @@ namespace Millwright\MenuBundle\Menu;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Config\ConfigCache;
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
+
 use Millwright\MenuBundle\Config\OptionMergerInterface;
 
 /**
@@ -19,7 +21,7 @@ use Millwright\MenuBundle\Config\OptionMergerInterface;
  * @package     MenuBundle
  * @subpackage  Menu
  */
-class MenuBuilder implements MenuBuilderInterface
+class MenuBuilder implements MenuBuilderInterface, WarmableInterface
 {
     /**
      * @var MenuFactoryInterface
@@ -77,6 +79,20 @@ class MenuBuilder implements MenuBuilderInterface
                 $this->compiledOptions = require_once $cache;
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function warmUp($cacheDir)
+    {
+        $currentDir = $this->options['cache_dir'];
+        $this->options['cache_dir'] = $cacheDir;
+
+        // force cache generation
+        $this->loadCache();
+
+        $this->options['cache_dir'] = $currentDir;
     }
 
     /**

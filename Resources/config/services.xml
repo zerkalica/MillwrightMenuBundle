@@ -14,6 +14,9 @@
         <parameter key="millwright_menu.templating.helper.class">Millwright\MenuBundle\Templating\Helper\MenuHelper</parameter>
         
         <parameter key="millwright_menu.options.class">Millwright\MenuBundle\Menu\MenuOptions</parameter>
+        
+        <parameter key="millwright_menu.cache_warmer.class">Millwright\MenuBundle\CacheWarmer\MenuCacheWarmer</parameter>
+        
     </parameters>
 
     <services>
@@ -54,6 +57,11 @@
                 <argument key="debug">%millwright_menu.debug%</argument>
             </argument>
             <argument type="collection" />
+        </service>
+        
+        <service id="millwright_menu.cache_warmer" class="%millwright_menu.cache_warmer.class%" public="false">
+            <tag name="kernel.cache_warmer" />
+            <argument type="service" id="millwright_menu.builder" />
         </service>
         
         <service id="millwright_menu.options" class="%millwright_menu.options.class%">

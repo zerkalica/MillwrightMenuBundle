@@ -169,7 +169,6 @@ class OptionMerger implements OptionMergerInterface
             unset($options['roles']);
         }
 
-
         if($name) {
             $classAnnotations = array();
             $arguments        = array();
