@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\Config\Definition\Processor;
-use Millwright\MenuBundle\DependencyInjection\Configuration;
+use Millwright\MenuBundle\DependencyInjection\MenuConfiguration;
 
 class MenuBuilderOptionsPass implements CompilerPassInterface
 {
@@ -41,7 +41,7 @@ class MenuBuilderOptionsPass implements CompilerPassInterface
         //$config = $container->get('millwright_menu.merger')->normalize($config);
 
         $processor     = new Processor();
-        $configuration = new Configuration();
+        $configuration = new MenuConfiguration();
 
         //reuse configuration for validating service-provided menu configs
         $config = array('millwright_menu' => $config);
