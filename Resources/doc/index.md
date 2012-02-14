@@ -20,8 +20,8 @@ Each link on the site is a part of configured menu container, which supports tra
    role-based and acl-based security context support
 
 2. Menu options consist of two parts: 
-    - `items` describes each menu item: labels, route|uri, translate, role
-    - `tree` describes each menu container as hierarchy of menu items  
+ -   `items` describes each menu item: labels, route|uri, translate, role
+ -   `tree` describes each menu container as hierarchy of menu items  
 
 3. `items` can be configured from config file and annotations in controller class and actions
 
@@ -249,33 +249,33 @@ millwright_menu:
 ```
 
 `items` section:
- - `<key>` - used as default value for name, route and label
- - `uri` - uri string, if no route parameter set 
- - `label` - label text or translation string template
- - `name` - name of menu item, used as default for route
- - `attributes` - knp menu item options
- - `linkAttributes`- knp menu item options
- - `childrenAttributes`- knp menu item options
- - `labelAttributes`- knp menu item options
- - `display`- knp menu item options
- - `displayChildren`- knp menu item options
- - `translateDomain` - translation domain
- - `translateParameters` - translation parameters
- - `secureParams` - copy of `@SecureParam` `JMSSecurityExtraBundle` annotations
- - `roles`  - copy of `@Secure` `JMSSecurityExtraBundle` annotation
- - `route` - route name for uri generation, if not set and uri not set - loads from key
- - `routeAbsolute` - true for absolute url generation
- - `showNonAuthorized` - show for non-authorized users
- - `showAsText` - if authorized and no access to item, show item as text
+-   `<key>` - used as default value for name, route and label
+-   `uri` - uri string, if no route parameter set 
+-   label` - label text or translation string template
+-   name` - name of menu item, used as default for route
+-   attributes` - knp menu item options
+-   linkAttributes`- knp menu item options
+-   childrenAttributes`- knp menu item options
+-   labelAttributes`- knp menu item options
+-   display`- knp menu item options
+-   displayChildren`- knp menu item options
+-   translateDomain` - translation domain
+-   translateParameters` - translation parameters
+-   secureParams` - copy of `@SecureParam` `JMSSecurityExtraBundle` annotations
+-   roles`  - copy of `@Secure` `JMSSecurityExtraBundle` annotation
+-   route` - route name for uri generation, if not set and uri not set - loads from key
+-   routeAbsolute` - true for absolute url generation
+-   showNonAuthorized` - show for non-authorized users
+-   showAsText` - if authorized and no access to item, show item as text
 
 `tree` section
- - `type` - menu container type
- - `children` - submenu items
+-   type` - menu container type
+-   children` - submenu items
 
 `renderers` section:
- - `<menu type>` - menu container type
- - `renderer` - custom renderer
- - `rendererOptions` - options pass to menu renderer: template, etc
+-   <menu type>` - menu container type
+-   renderer` - custom renderer
+-   rendererOptions` - options pass to menu renderer: template, etc
 
 ### Annotation options
 
