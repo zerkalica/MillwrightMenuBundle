@@ -11,46 +11,20 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
  */
-class Configuration implements ConfigurationInterface
+class Configuration extends MenuConfiguration
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getConfigTreeBuilder()
+    protected function setChildren($node)
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('millwright_menu', 'array', new MenuTreeBuilder());
-
-        $node = $rootNode
-            ->children()
-                ->scalarNode('generator_cache_class')
-                    ->defaultValue('%kernel.name%%kernel.environment%MenuTree')
-                ->end()
-                ->scalarNode('cache_dir')->defaultValue('%kernel.cache_dir%')->end()
-                ->scalarNode('debug')->defaultValue('%kernel.debug%')->end()
-                ->arrayNode('renderers')
-                    ->useAttributeAsKey('type')
-                    ->prototype('array')
-                        ->children()
-                            ->scalarNode('renderer')->defaultValue(null)->end()
-                            ->arrayNode('rendererOptions')
-                                ->children()
-                                    ->scalarNode('template')->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-                ->menuNode('items')
-                    ->menuNodePlain()
-                ->end()
-                ->menuNode('tree')
-                    ->menuNodeHierarhy()
-                ->end()
-
+        $node
+            ->scalarNode('generator_cache_class')
+                ->defaultValue('%kernel.name%%kernel.environment%MenuTree')
             ->end()
+            ->scalarNode('cache_dir')->defaultValue('%kernel.cache_dir%')->end()
+            ->scalarNode('debug')->defaultValue('%kernel.debug%')->end()
         ;
 
-        return $treeBuilder;
+        parent::setChildren($node);
+
+        return $this;
     }
 }

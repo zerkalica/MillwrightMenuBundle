@@ -127,7 +127,6 @@ class MenuFactory implements MenuFactoryInterface
             }
         }
 
-
         if ($options['route'] && !$rootItem) {
             $uri = $this->router->generate(
                 $options['route'],
