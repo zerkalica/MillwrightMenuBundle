@@ -1,6 +1,6 @@
 <?php
 /**
- * Normalize and merge menu options
+ * Normalize and merge menu options from controller annotations, menu items and tree configs
  *
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
  * @category    Millwright
