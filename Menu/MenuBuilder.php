@@ -71,7 +71,6 @@ class MenuBuilder implements MenuBuilderInterface
     public function loadCache($cacheDir = null)
     {
         if(null === $this->compiledOptions) {
-            $this->currentUri = $this->container->get('request')->getRequestUri();
 
             if(!$cacheDir) {
                 $cacheDir = $this->options['cache_dir'];
@@ -135,6 +134,10 @@ class MenuBuilder implements MenuBuilderInterface
         //3. add parameters to options array
         //4. remove per item routeParams, use only per menu defaultRouteParams
         $factory = clone $this->factory;
+
+        if (!$this->currentUri) {
+            $this->currentUri = $this->container->get('request')->getRequestUri();
+        }
 
         $factory
             ->setCurrentUri($this->currentUri)
