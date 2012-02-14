@@ -154,12 +154,12 @@ class OptionMerger implements OptionMergerInterface
      *
      * @param  array $options
      * @param  array $parameters
+     * @param  string $name
      * @return void
      */
-    private function merge(array & $options, array & $parameters)
+    private function merge(array & $options, array & $parameters, $name)
     {
         $options += array(
-            'name' => null,
             'children' => array(),
             'secureParams' => array('class' => null)
         );
@@ -169,7 +169,7 @@ class OptionMerger implements OptionMergerInterface
             unset($options['roles']);
         }
 
-        $name = $options['name'];
+
         if($name) {
             $classAnnotations = array();
             $arguments        = array();
@@ -205,8 +205,7 @@ class OptionMerger implements OptionMergerInterface
         }
 
         foreach($options['children'] as $name => & $child) {
-            $child += array('name' => $name);
-            $this->merge($child, $parameters);
+            $this->merge($child, $parameters, $name);
         }
     }
 
@@ -216,8 +215,9 @@ class OptionMerger implements OptionMergerInterface
      */
     public function normalize(array $menuOptions)
     {
-        foreach($menuOptions['tree'] as & $menu) {
-            $this->merge($menu, $menuOptions['items']);
+        foreach($menuOptions['tree'] as $name => & $menu) {
+            $this->merge($menu, $menuOptions['items'], $name);
+            $menuOptions['items'][$name] = null;
         }
 
         return $menuOptions;

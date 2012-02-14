@@ -115,6 +115,12 @@ class MenuBuilder implements MenuBuilderInterface
     )
     {
         $options = $this->getMenuOptions($name);
+
+        //@todo How to pass route params ?
+        //1. remove factory from service and create new instance here ?
+        //2. clone factory and replace route params (faster?)
+        //3. add parameters to options array
+        //4. remove per item routeParams, use only per menu defaultRouteParams
         $factory = clone $this->factory;
 
         $factory

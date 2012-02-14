@@ -29,11 +29,15 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 class MenuFactory implements MenuFactoryInterface
 {
     /**
+     * Per menu route params
+     *
      * @var array
      */
     protected $defaultRouteParams = array();
 
     /**
+     * Per item route params
+     *
      * @var array
      */
     protected $routeParams = array();
@@ -66,81 +70,6 @@ class MenuFactory implements MenuFactoryInterface
     }
 
     /**
-     * Create new empty instance of menu item
-     *
-     * @param  string $name
-     * @return ItemInterface
-     */
-    protected function createItemInstance($name)
-    {
-        return new MenuItem($name, $this);
-    }
-
-    /**
-     * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuBuilderInterface::setContext()
-     */
-    public function setContext(MenuItemInterface $item,
-        array $routeParameters = array(),
-        $recursive = false)
-    {
-        $display = true;
-
-        $roles = $item->getRoles();
-        if($roles && !$this->security->isGranted($roles)) {
-            $display = false;
-        }
-
-        $secureParams = $item->getSecureParams();
-        if ($display && $secureParams) {
-            foreach($secureParams as $secureParam) {
-                $paramName   = $secureParam['name'];
-                if(isset($routeParameters[$paramName])) {
-                    $permissions = $secureParam['permissions'];
-                    $entityId    = $routeParameters[$paramName];
-                    $entityClass = $secureParam['class'];
-                    $object      = new ObjectIdentity($entityId, $entityClass);
-
-                    if(!$this->security->isGranted($permissions, $object)) {
-                        $display = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        $route = $item->getRoute();
-        if ($route) {
-            $uri = $this->router->generate(
-                $route,
-                $routeParameters,
-                $item->getRouteAbsolute()
-            );
-            $item->setUri($uri);
-        }
-
-        if(!$display ) {
-            if ($item->getShowNonAuthorized() && !$this->security->getToken()) {
-                $display = true;
-            } else if($item->getShowAsText()) {
-                $display = true;
-                $item->setUri(null);
-            }
-        }
-
-        $item->setDisplay($display);
-        $item->setCurrentUri($this->currentUri);
-
-        if ($recursive) {
-            foreach($item->getChildren() as $child) {
-                $this->setContext($child, $routeParameters, $recursive);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::setDefaultRouteParams()
      */
@@ -163,6 +92,82 @@ class MenuFactory implements MenuFactoryInterface
     }
 
     /**
+     * Set uri, display, current uri to menu item
+     *
+     * @param  MenuItemInterface $item
+     * @param  array $routeParameters
+     * @param  array $options
+     * @return MenuFactoryInterface
+     */
+    private function setContext(MenuItemInterface $item,
+        array $routeParameters = array(),
+        array $options = array())
+    {
+        $display = true;
+        $rootItem = !$item->getName();
+
+        if($options['roles'] && !$this->security->isGranted($options['roles'])) {
+            $display = false;
+        }
+
+        if ($display) {
+            foreach($options['secureParams'] as $secureParam) {
+                $paramName   = $secureParam['name'];
+                if(isset($routeParameters[$paramName])) {
+                    $permissions = $secureParam['permissions'];
+                    $entityId    = $routeParameters[$paramName];
+                    $entityClass = $secureParam['class'];
+                    $object      = new ObjectIdentity($entityId, $entityClass);
+
+                    if(!$this->security->isGranted($permissions, $object)) {
+                        $display = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        if ($options['route'] && !$rootItem) {
+            $uri = $this->router->generate(
+                $options['route'],
+                $routeParameters,
+                $options['routeAbsolute']
+            );
+            $item->setUri($uri);
+        }
+
+        if(!$display) {
+            if ($options['showNonAuthorized'] && !$this->security->getToken()) {
+                $display = true;
+            }
+            if ($options['showAsText']) {
+                $display = true;
+                $item->setUri(null);
+            }
+        }
+
+        if(!$display) {
+            $item->setDisplay(false);
+        }
+
+        $item->setCurrentUri($this->currentUri);
+
+        return $this;
+    }
+
+    /**
+     * Create new empty instance of menu item
+     *
+     * @param  string $name
+     * @return ItemInterface
+     */
+    protected function createItemInstance($name)
+    {
+        return new MenuItem($name, $this);
+    }
+
+    /**
      * {@inheritdoc}
      * @see Knp\Menu.FactoryInterface::createItem()
      *
@@ -170,19 +175,50 @@ class MenuFactory implements MenuFactoryInterface
      */
     public function createItem($name, array $options = array())
     {
+        $options += array(
+            'uri' => null,
+            'label' => null,
+            'attributes' => array(),
+            'linkAttributes' => array(),
+            'childrenAttributes' => array(),
+            'labelAttributes' => array(),
+            'display' => true,
+            'displayChildren' => true,
+
+            'type' => null,
+            'translateDomain' => null,
+            'translateParamteters' => array(),
+
+            'roles' => array(),
+            'secureParams' => array(),
+            'route' => null,
+            'routeAbsolute' => false,
+            'showNonAuthorized' => false,
+            'showAsText' => false,
+        );
+
         $item = $this->createItemInstance($name);
 
-        unset($options['children']);
-        foreach ($options as $key => $default) {
-            $method = 'set' . ucfirst($key);
-            $item->$method($options[$key]);
-        }
+        $item
+            ->setUri($options['uri'])
+            ->setLabel($options['label'])
+            ->setAttributes($options['attributes'])
+            ->setLinkAttributes($options['linkAttributes'])
+            ->setChildrenAttributes($options['childrenAttributes'])
+            ->setLabelAttributes($options['labelAttributes'])
+            ->setDisplay($options['display'])
+            ->setDisplayChildren($options['displayChildren'])
+
+            ->setType($options['type'])
+            ->setTranslateDomain($options['translateDomain'])
+            ->setTranslateParameters($options['translateParameters'])
+        ;
 
         $params = isset($this->routeParams[$name])
             ? $this->routeParams[$name]
             : $this->defaultRouteParams;
 
-        $this->setContext($item, $params);
+        $this->setContext($item, $params, $options);
 
         return $item;
     }
@@ -206,11 +242,11 @@ class MenuFactory implements MenuFactoryInterface
      * {@inheritdoc}
      * @see Knp\Menu.FactoryInterface::createFromArray()
      */
-    public function createFromArray(array $data)
+    public function createFromArray(array $data, $name = null)
     {
-        $item = $this->createItem($data['name'], $data);
-        foreach ($data['children'] as $key => $child) {
-            $item->addChild($this->createFromArray($child));
+        $item = $this->createItem($name, $data);
+        foreach ($data['children'] as $name => $child) {
+            $item->addChild($this->createFromArray($child, $name));
         }
 
         return $item;
