@@ -159,8 +159,7 @@ millwright_menu:
 
     tree: #menu containers
         user_admin: #user administration links container
-            rendererOptions: #menu container render options
-                template: '::actions.html.twig'
+            type: navigation # menu type id
             children:        
                 fos_user_profile_show: ~
                 fos_user_change_password: ~
@@ -250,33 +249,33 @@ millwright_menu:
 ```
 
 `items` section:
-- `<key>` - used as default value for name, route and label
-- `uri` - uri string, if no route parameter set 
-- `label` - label text or translation string template
-- `name` - name of menu item, used as default for route
-- `attributes` - knp menu item options
-- `linkAttributes`- knp menu item options
-- `childrenAttributes`- knp menu item options
-- `labelAttributes`- knp menu item options
-- `display`- knp menu item options
-- `displayChildren`- knp menu item options
-- `translateDomain` - translation domain
-- `translateParameters` - translation parameters
-- `secureParams` - copy of `@SecureParam` `JMSSecurityExtraBundle` annotations
-- `roles`  - copy of `@Secure` `JMSSecurityExtraBundle` annotation
-- `route` - route name for uri generation, if not set and uri not set - loads from key
-- `routeAbsolute` - true for absolute url generation
-- `showNonAuthorized` - show for non-authorized users
-- `showAsText` - if authorized and no access to item, show item as text
+ - `<key>` - used as default value for name, route and label
+ - `uri` - uri string, if no route parameter set 
+ - `label` - label text or translation string template
+ - `name` - name of menu item, used as default for route
+ - `attributes` - knp menu item options
+ - `linkAttributes`- knp menu item options
+ - `childrenAttributes`- knp menu item options
+ - `labelAttributes`- knp menu item options
+ - `display`- knp menu item options
+ - `displayChildren`- knp menu item options
+ - `translateDomain` - translation domain
+ - `translateParameters` - translation parameters
+ - `secureParams` - copy of `@SecureParam` `JMSSecurityExtraBundle` annotations
+ - `roles`  - copy of `@Secure` `JMSSecurityExtraBundle` annotation
+ - `route` - route name for uri generation, if not set and uri not set - loads from key
+ - `routeAbsolute` - true for absolute url generation
+ - `showNonAuthorized` - show for non-authorized users
+ - `showAsText` - if authorized and no access to item, show item as text
 
 `tree` section
-- `type` - menu container type
-- `children` - submenu items
+ - `type` - menu container type
+ - `children` - submenu items
 
 `renderers` section:
-- `<menu type>` - menu container type
-- `renderer` - custom renderer
-- `rendererOptions` - options pass to menu renderer: template, etc
+ - `<menu type>` - menu container type
+ - `renderer` - custom renderer
+ - `rendererOptions` - options pass to menu renderer: template, etc
 
 ### Annotation options
 
