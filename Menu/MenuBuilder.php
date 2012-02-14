@@ -8,11 +8,10 @@
  * @subpackage  Menu
  */
 namespace Millwright\MenuBundle\Menu;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Config\ConfigCache;
-
 use Millwright\MenuBundle\Config\OptionMergerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
@@ -47,10 +46,18 @@ class MenuBuilder implements MenuBuilderInterface
      */
     private $compiledOptions;
 
+    /**
+     *
+     * @var ContainerInterface
+     */
+    private $container;
+
+    private $currentUri;
 
     public function __construct(
         MenuFactoryInterface  $factory,
         OptionMergerInterface $merger,
+        ContainerInterface       $container,
         array                 $options,
         array                 $menuOptions
     ) {
@@ -58,11 +65,14 @@ class MenuBuilder implements MenuBuilderInterface
         $this->merger      = $merger;
         $this->options     = $options;
         $this->menuOptions = $menuOptions;
+        $this->container   = $container;
     }
 
     public function loadCache($cacheDir = null)
     {
         if(null === $this->compiledOptions) {
+            $this->currentUri = $this->container->get('request')->getRequestUri();
+
             if(!$cacheDir) {
                 $cacheDir = $this->options['cache_dir'];
             }
@@ -111,6 +121,31 @@ class MenuBuilder implements MenuBuilderInterface
     }
 
     /**
+     * Create and setup menu item creation factory
+     *
+     * @param  array $defaultRouteParams
+     * @param  array|[] $routeParams
+     * @return MenuFactoryIterface
+     */
+    private function createFactory(array $defaultRouteParams, array $routeParams = array())
+    {
+        //@todo How to pass route params ?
+        //1. remove factory from service and create new instance here ?
+        //2. clone factory and replace route params (faster?)
+        //3. add parameters to options array
+        //4. remove per item routeParams, use only per menu defaultRouteParams
+        $factory = clone $this->factory;
+
+        $factory
+            ->setCurrentUri($this->currentUri)
+            ->setDefaultRouteParams($defaultRouteParams)
+            ->setRouteParams($routeParams)
+        ;
+
+        return $factory;
+    }
+
+    /**
      * {@inheritdoc}
      * @see Millwright\MenuBundle\Menu.MenuBuilderInterface::createMenu()
      */
@@ -120,18 +155,7 @@ class MenuBuilder implements MenuBuilderInterface
     )
     {
         $options = $this->getMenuOptions($name);
-
-        //@todo How to pass route params ?
-        //1. remove factory from service and create new instance here ?
-        //2. clone factory and replace route params (faster?)
-        //3. add parameters to options array
-        //4. remove per item routeParams, use only per menu defaultRouteParams
-        $factory = clone $this->factory;
-
-        $factory
-            ->setDefaultRouteParams($defaultRouteParams)
-            ->setRouteParams($routeParams)
-        ;
+        $factory = $this->createFactory($defaultRouteParams, $routeParams);
 
         return $factory->createFromArray($options);
     }
@@ -143,12 +167,7 @@ class MenuBuilder implements MenuBuilderInterface
     public function createLink($name, array $defaultRouteParams = array())
     {
         $options = $this->getLinkOptions($name);
-        $factory = clone $this->factory;
-
-        $factory
-            ->setDefaultRouteParams($defaultRouteParams)
-            ->setRouteParams(array())
-        ;
+        $factory = $this->createFactory($defaultRouteParams);
 
         return $factory->createItem($name, $options);
     }

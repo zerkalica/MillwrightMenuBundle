@@ -20,6 +20,21 @@ use Knp\Menu\FactoryInterface;
 interface MenuFactoryInterface extends FactoryInterface
 {
     /**
+     * Set current uri
+     *
+     * @param  string $currentUri
+     * @return MenuFactoryInterface
+     */
+    public function setCurrentUri($currentUri);
+
+    /**
+     * Get current uri
+     *
+     * @return string
+     */
+    public function getCurrentUri();
+
+    /**
      * Set route params
      * This parameters array for each menu item.
      * Overlaps $defaultRouteParams

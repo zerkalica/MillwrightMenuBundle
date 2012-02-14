@@ -10,8 +10,6 @@
 
 namespace Millwright\MenuBundle\Menu;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Knp\Menu\NodeInterface;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -59,14 +57,30 @@ class MenuFactory implements MenuFactoryInterface
 
     public function __construct(
         RouterInterface          $router,
-        SecurityContextInterface $security,
-        ContainerInterface       $container
-        //Request                  $request
+        SecurityContextInterface $security
     ) {
         $this->router      = $router;
         $this->security    = $security;
-        //@todo fix this: can't use scope=request in service.xml, twig
-        //$this->currentUri  = $container->get('request')->getRequestUri();
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::setCurrentUri()
+     */
+    public function setCurrentUri($currentUri)
+    {
+        $this->currentUri = $currentUri;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::getCurrentUri()
+     */
+    public function getCurrentUri()
+    {
+        return $this->currentUri;
     }
 
     /**

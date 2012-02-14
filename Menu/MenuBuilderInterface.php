@@ -18,6 +18,7 @@ interface MenuBuilderInterface
      * Create menu
      *
      * @param  string  $name name of menu container
+     * @param  Request $request
      * @param  array   $defaultRouteParams default route params for options
      * @param  array   $routeParams
      * @see MenuFactoryInterface::setRouteParams()

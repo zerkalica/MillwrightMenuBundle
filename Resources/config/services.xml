@@ -40,7 +40,6 @@
         <service id="millwright_menu.factory" class="%millwright_menu.factory.class%">
             <argument type="service" id="router" />
             <argument type="service" id="security.context" />
-            <argument type="service" id="service_container" />
         </service>
 
         <service id="millwright_menu.merger" class="%millwright_menu.merger.class%">
@@ -51,6 +50,7 @@
         <service id="millwright_menu.builder" class="%millwright_menu.menu_builder.class%">
             <argument type="service" id="millwright_menu.factory" />
             <argument type="service" id="millwright_menu.merger" />
+            <argument type="service" id="service_container" />
             <argument type="collection">
                 <argument key="generator_cache_class">%millwright_menu.generator_cache_class%</argument>
                 <argument key="cache_dir">%millwright_menu.cache_dir%</argument>
