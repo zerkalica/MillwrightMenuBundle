@@ -107,7 +107,22 @@ knp_menu:
 
 ## Creating menus
 
-All menus configured in `millwright_menu` section of config.
+Any bundle can provide own menu or modify existing through `millwright_menu.menu_options` tagged service:
+
+```xml
+        <service id="millwright_menu.options" class="%millwright_menu.options.class%">
+            <tag name="millwright_menu.menu_options" order="100"/>
+            <argument type="collection">
+                <argument key="items">%millwright_menu.items%</argument>
+                <argument key="tree">%millwright_menu.tree%</argument>
+                <argument key="renderers">%millwright_menu.renderers%</argument>
+            </argument>
+        </service>
+```
+
+`order` attribute - order of provided menu.
+First parameter is the collection of menu options. 
+By default one menu provided by MillwrightMenuBundle and configured in `millwright_menu` section of the application config.
 
 ```yaml
 # app/config/menu.yml
@@ -206,7 +221,7 @@ class DefaultController extends Controller {
 We have a user collection, each user has acl permissions
 
 ```jinja
-{% for user in usersCollection %}
+{% for user in users %}
     {{ millwright_menu_render('main', {user: user.id}) }}
 {% endfor %}
 ```
