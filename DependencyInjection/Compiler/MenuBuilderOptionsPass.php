@@ -48,6 +48,21 @@ class MenuBuilderOptionsPass implements CompilerPassInterface
         $config = $processor->processConfiguration($configuration, $config);
 
         if(isset($config['renderers'])) {
+            $renderers = $config['renderers'];
+            foreach($config['tree'] as & $tree) {
+                if(isset($tree['type'])) {
+                    $type = $tree['type'];
+                    if(isset($renderers[$type])) {
+                        $renderOption = $renderers[$type];
+                        foreach(array('attributes') as $option) {
+                            if(isset($renderOption[$option])) {
+                                $tree[$option] = $renderOption[$option];
+                            }
+                        }
+                    }
+                }
+            }
+
             $container->getDefinition('millwright_menu.helper')
                 ->replaceArgument(2, $config['renderers']);
 

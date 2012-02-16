@@ -178,20 +178,19 @@ class OptionMerger implements OptionMergerInterface
             }
 
             if (empty($options['uri'])) {
-                $options += array('route' => $name);
-                if ($options['route']) {
-                    $method = $this->getActionMethod($options['route']);
-                    if ($method) {
-                        foreach ($method->getParameters() as $argument) {
-                            $arguments[$argument->getName()] = $argument;
-                        }
-
-                        $annotations = $this->reader->getMethodAnnotations($method);
-                        $options     = $this->mergeAnnotations($options, $annotations, $arguments);
-
-                        $class       = $method->getDeclaringClass();
-                        $classAnnotations = $this->reader->getClassAnnotations($class);
+                $route = isset($options['route']) ? $options['route'] : $name;
+                $method = $this->getActionMethod($route);
+                if ($method) {
+                    $options += array('route' => $route);
+                    foreach ($method->getParameters() as $argument) {
+                        $arguments[$argument->getName()] = $argument;
                     }
+
+                    $annotations = $this->reader->getMethodAnnotations($method);
+                    $options     = $this->mergeAnnotations($options, $annotations, $arguments);
+
+                    $class       = $method->getDeclaringClass();
+                    $classAnnotations = $this->reader->getClassAnnotations($class);
                 }
             }
 
