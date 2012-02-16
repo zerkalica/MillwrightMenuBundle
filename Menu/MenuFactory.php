@@ -120,22 +120,26 @@ class MenuFactory implements MenuFactoryInterface
         $display = true;
         $rootItem = !$item->getName();
 
-        if($options['roles'] && !$this->security->isGranted($options['roles'])) {
-            $display = false;
-        }
+        $token = $this->security->getToken();
 
-        if ($display) {
-            foreach($options['secureParams'] as $secureParam) {
-                $paramName   = $secureParam['name'];
-                if(isset($routeParameters[$paramName])) {
-                    $permissions = $secureParam['permissions'];
-                    $entityId    = $routeParameters[$paramName];
-                    $entityClass = $secureParam['class'];
-                    $object      = new ObjectIdentity($entityId, $entityClass);
+        if ($token) {
+            if($options['roles'] && !$this->security->isGranted($options['roles'])) {
+                $display = false;
+            }
 
-                    if(!$this->security->isGranted($permissions, $object)) {
-                        $display = false;
-                        break;
+            if ($display) {
+                foreach($options['secureParams'] as $secureParam) {
+                    $paramName   = $secureParam['name'];
+                    if(isset($routeParameters[$paramName])) {
+                        $permissions = $secureParam['permissions'];
+                        $entityId    = $routeParameters[$paramName];
+                        $entityClass = $secureParam['class'];
+                        $object      = new ObjectIdentity($entityId, $entityClass);
+
+                        if(!$this->security->isGranted($permissions, $object)) {
+                            $display = false;
+                            break;
+                        }
                     }
                 }
             }
@@ -151,7 +155,7 @@ class MenuFactory implements MenuFactoryInterface
         }
 
         if(!$display) {
-            if ($options['showNonAuthorized'] && !$this->security->getToken()) {
+            if ($options['showNonAuthorized'] && !$token) {
                 $display = true;
             }
             if ($options['showAsText']) {
