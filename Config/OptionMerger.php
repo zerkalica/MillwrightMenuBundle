@@ -27,12 +27,12 @@ class OptionMerger implements OptionMergerInterface
     /**
      * @var RouterInterface
      */
-    private $router;
+    protected $router;
 
     /**
      * @var Reader
      */
-    private $reader;
+    protected $reader;
 
     public function __construct(
         RouterInterface $router,
@@ -73,7 +73,7 @@ class OptionMerger implements OptionMergerInterface
      * @param  string $name route name
      * @return \ReflectionMethod
      */
-    private function getActionMethod($name)
+    protected function getActionMethod($name)
     {
         //@todo do not use getRouteCollection - not interface method
         // howto get controller and action name by route name ?
@@ -103,7 +103,7 @@ class OptionMerger implements OptionMergerInterface
      * @param  array[\ReflectionParameter] $arguments
      * @return array
      */
-    private function mergeAnnotations(array $options, array $annotations,
+    protected function mergeAnnotations(array $options, array $annotations,
         array $arguments = array())
     {
         $secureParams = array();
@@ -131,7 +131,7 @@ class OptionMerger implements OptionMergerInterface
      * @param  Object $annotation
      * @return array
      */
-    private function annotationToArray($annotation)
+    protected function annotationToArray($annotation)
     {
         $options = array();
         foreach((array) $annotation as $key => $value) {
@@ -157,7 +157,7 @@ class OptionMerger implements OptionMergerInterface
      * @param  string $name
      * @return void
      */
-    private function merge(array & $options, array & $parameters, $name)
+    protected function merge(array & $options, array & $parameters, $name)
     {
         $options += array(
             'children' => array(),
