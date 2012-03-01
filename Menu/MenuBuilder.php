@@ -24,35 +24,35 @@ class MenuBuilder implements MenuBuilderInterface
     /**
      * @var MenuFactoryInterface
      */
-    private $factory;
+    protected $factory;
 
     /**
      * @var OptionMergerInterface
      */
-    private $merger;
+    protected $merger;
 
     /**
      * @var array
      */
-    private $options;
+    protected $options;
 
     /**
      * @var array
      */
-    private $menuOptions;
+    protected $menuOptions;
 
     /**
      * @var array
      */
-    private $compiledOptions;
+    protected $compiledOptions;
 
     /**
      *
      * @var ContainerInterface
      */
-    private $container;
+    protected  $container;
 
-    private $currentUri;
+    protected $currentUri;
 
     public function __construct(
         MenuFactoryInterface  $factory,
@@ -99,7 +99,7 @@ class MenuBuilder implements MenuBuilderInterface
      * @param  string $name menu container name
      * @return array
      */
-    private function getMenuOptions($name)
+    protected function getMenuOptions($name)
     {
         $this->loadCache();
 
@@ -112,7 +112,7 @@ class MenuBuilder implements MenuBuilderInterface
      * @param  string $name menu item name
      * @return array
      */
-    private function getLinkOptions($name)
+    protected function getLinkOptions($name)
     {
         $this->loadCache();
 
@@ -126,7 +126,7 @@ class MenuBuilder implements MenuBuilderInterface
      * @param  array|[] $routeParams
      * @return MenuFactoryIterface
      */
-    private function createFactory(array $defaultRouteParams, array $routeParams = array())
+    protected function createFactory(array $defaultRouteParams, array $routeParams = array())
     {
         //@todo How to pass route params ?
         //1. remove factory from service and create new instance here ?
