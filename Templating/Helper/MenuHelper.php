@@ -7,7 +7,7 @@ use Millwright\MenuBundle\Twig\Helper;
 
 class MenuHelper extends TemplatingHelper
 {
-    private $helper;
+    protected $helper;
 
     /**
      * @param Helper $helper

@@ -8,7 +8,7 @@ use Knp\Menu\Provider\MenuProviderInterface;
 
 class MenuExtension extends \Twig_Extension
 {
-    private $helper;
+    protected $helper;
 
     /**
      * @param Helper $helper
