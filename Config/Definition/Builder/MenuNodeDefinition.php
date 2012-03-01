@@ -20,7 +20,7 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                 ->end(); // prototype
     }
 
-    private function beginTree()
+    protected function beginTree()
     {
         return $this
             ->useAttributeAsKey('id')
