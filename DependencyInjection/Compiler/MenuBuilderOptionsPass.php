@@ -97,7 +97,7 @@ class MenuBuilderOptionsPass implements CompilerPassInterface
      * @param  array $from
      * @return array
      */
-    private function merge($to, $from)
+    protected function merge($to, $from)
     {
         foreach ($from as $key => $value) {
             if (!is_array($value)) {

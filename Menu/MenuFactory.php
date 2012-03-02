@@ -113,7 +113,7 @@ class MenuFactory implements MenuFactoryInterface
      * @param  array $options
      * @return MenuFactoryInterface
      */
-    private function setContext(MenuItemInterface $item,
+    protected  function setContext(MenuItemInterface $item,
         array $routeParameters = array(),
         array $options = array())
     {

@@ -15,9 +15,9 @@ use Millwright\MenuBundle\Menu\MenuItemInterface;
  */
 class Helper
 {
-    private $rendererProvider;
-    private $builder;
-    private $rendererOptions;
+    protected $rendererProvider;
+    protected $builder;
+    protected $rendererOptions;
 
     /**
      * @param RendererProviderInterface $rendererProvider
