@@ -55,14 +55,14 @@ class OptionMerger implements OptionMergerInterface
             'labelAttributes'    => array(),
             'display'            => true,
             'displayChildren'    => true,
-            'translateDomain'    => null,
-            'translateParameters' => array(),
             'secureParams'        => array(),
             'roles'               => array(),
             'route'               => null,
             'routeAbsolute'       => false,
             'showNonAuthorized'   => false,
             'showAsText'          => false,
+            'translateDomain'    => null,
+            'translateParameters' => array(),
             'type'                => null,
         );
     }

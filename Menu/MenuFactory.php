@@ -11,6 +11,7 @@
 namespace Millwright\MenuBundle\Menu;
 
 use Knp\Menu\NodeInterface;
+use Knp\Menu\ItemInterface as MenuItemInterface;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
@@ -225,10 +226,11 @@ class MenuFactory implements MenuFactoryInterface
             ->setLabelAttributes($options['labelAttributes'])
             ->setDisplay($options['display'])
             ->setDisplayChildren($options['displayChildren'])
-
-            ->setType($options['type'])
-            ->setTranslateDomain($options['translateDomain'])
-            ->setTranslateParameters($options['translateParameters'])
+            ->setExtras(array(
+                'type' => $options['type'],
+                'translateDomain' => $options['translateDomain'],
+                'translateParameters' => $options['translateParameters']
+            ))
         ;
 
         $params = isset($this->routeParams[$name])

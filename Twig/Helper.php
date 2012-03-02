@@ -43,7 +43,7 @@ class Helper
      */
     public function get($menu, array $path = array(), array $defaultRouteParams = array())
     {
-        if (!$menu instanceof MenuItemInterface) {
+        if (!$menu instanceof ItemInterface) {
             if (null === $this->builder) {
                 throw new \BadMethodCallException('A menu provider must be set to retrieve a menu');
             }
@@ -91,7 +91,7 @@ class Helper
      */
     public function render($menu, array $routeParams = array(), array $options = array(), $renderer =  null)
     {
-        if (!$menu instanceof MenuItemInterface) {
+        if (!$menu instanceof ItemInterface) {
             $path = array();
             if (is_array($menu)) {
                 if (empty($menu)) {
@@ -105,7 +105,7 @@ class Helper
         }
 
 
-        $type = $menu->getType();
+        $type = $menu->getExtra('type');
         if($type && isset($this->rendererOptions[$type])) {
             $rendererParams = $this->rendererOptions[$type];
             $options += $rendererParams['rendererOptions'];

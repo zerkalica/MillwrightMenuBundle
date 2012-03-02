@@ -8,7 +8,6 @@
  * @subpackage Menu
  */
 namespace Millwright\MenuBundle\Menu;
-
 use Knp\Menu\MenuItem as KnpMenuItem;
 
 /**
@@ -17,63 +16,8 @@ use Knp\Menu\MenuItem as KnpMenuItem;
  * @package    MenuBundle
  * @subpackage Menu
  */
-class MenuItem extends KnpMenuItem implements MenuItemInterface
+class MenuItem extends KnpMenuItem
 {
-    /**
-     * @var string
-     */
-    protected $translateDomain;
-
-    /**
-     * @var array
-     */
-    protected $translateParameters = array();
-
-    /**
-     * @var string
-     */
-    protected $type;
-
-    /**
-     * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setTranslateDomain()
-     */
-    public function setTranslateDomain($translateDomain)
-    {
-        $this->translateDomain = $translateDomain;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getTranslateDomain()
-     */
-    public function getTranslateDomain()
-    {
-        return $this->translateDomain;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setTranslateParameters()
-     */
-    public function setTranslateParameters(array $translateParameters)
-    {
-        $this->translateParameters = $translateParameters;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getTranslateParameters()
-     */
-    public function getTranslateParameters()
-    {
-        return $this->translateParameters;
-    }
-
     /**
      * {@inheritdoc}
      * @see Knp\Menu.MenuItem::addChild()
@@ -89,25 +33,5 @@ class MenuItem extends KnpMenuItem implements MenuItemInterface
         $this->children[$child->getName()] = $child;
 
         return $child;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuItemInterface::setType()
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuItemInterface::getType()
-     */
-    public function getType()
-    {
-        return $this->type;
     }
 }

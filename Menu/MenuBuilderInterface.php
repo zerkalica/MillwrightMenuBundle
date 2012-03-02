@@ -7,6 +7,8 @@
  */
 namespace Millwright\MenuBundle\Menu;
 
+use Knp\Menu\ItemInterface as MenuItemInterface;
+
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
  * @category    Millwright
