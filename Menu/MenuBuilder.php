@@ -86,7 +86,7 @@ class MenuBuilder implements MenuBuilderInterface
 
             if(!$cache || !$cache->isFresh()) {
                 $this->compiledOptions = $this->merger->normalize($this->menuOptions);
-                $cache->write('return ' . var_export($this->compiledOptions, true) . ';');
+                $cache->write('<?php return ' . var_export($this->compiledOptions, true) . ';');
             } else {
                 $this->compiledOptions = require_once $cache;
             }
