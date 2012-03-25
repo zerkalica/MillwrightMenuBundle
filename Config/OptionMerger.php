@@ -103,22 +103,21 @@ class OptionMerger implements OptionMergerInterface
      * @param  array[\ReflectionParameter] $arguments
      * @return array
      */
-    protected function mergeAnnotations(array $options, array $annotations,
+    protected function getAnnotations(array $annotations,
         array $arguments = array())
     {
-        $secureParams = array();
+        $options = array();
         foreach($annotations as $param) {
             if ($param instanceof SecureParam) {
-                $secureParams[$param->name] = $this->annotationToArray($param);
+                $options['secureParams'][$param->name] = $this->annotationToArray($param);
                 /* @var $argument \ReflectionParameter */
                 $argument  = $arguments[$param->name];
                 $class     = $argument->getClass();
-                $secureParams[$param->name]['class'] = $class->getName();
+                $options['secureParams'][$param->name]['class'] = $class->getName();
             } else if ($param instanceof Secure || $param instanceof Menu ) {
                 $options += $this->annotationToArray($param);
             }
         }
-        $options['secureParams'] += $secureParams;
 
         return $options;
     }
@@ -157,23 +156,20 @@ class OptionMerger implements OptionMergerInterface
      */
     protected function merge(array & $options, array & $parameters, $name)
     {
-        $options += array(
-            'children' => array(),
-            'secureParams' => array()
-        );
-
-        if (empty($options['roles'])) {
-            //MenuNodeDefinition uses beforeNormalization, roles always exists
-            unset($options['roles']);
+        $itemParameters  = isset($parameters[$name]) ? $parameters[$name] : array();
+        foreach(array_keys($options) as $key) {
+            if(empty($options[$key])) {
+                if(!empty($itemParameters[$key])) {
+                    $options[$key] = $itemParameters[$key];
+                } else {
+                    unset($options[$key]);
+                }
+            }
         }
-
         if($name) {
+            $annotationsOptions = array();
             $classAnnotations = array();
             $arguments        = array();
-
-            if (isset($parameters[$name])) {
-                $options += $parameters[$name];
-            }
 
             if (empty($options['uri'])) {
                 $route = isset($options['route']) ? $options['route'] : $name;
@@ -185,20 +181,24 @@ class OptionMerger implements OptionMergerInterface
                     }
 
                     $annotations = $this->reader->getMethodAnnotations($method);
-                    $options     = $this->mergeAnnotations($options, $annotations, $arguments);
+                    $annotationsOptions = $this->getAnnotations($annotations, $arguments);
 
                     $class       = $method->getDeclaringClass();
                     $classAnnotations = $this->reader->getClassAnnotations($class);
                 }
             }
+            $annotationsOptions = array_merge($annotationsOptions, $this->getAnnotations($classAnnotations, $arguments));
 
-            $options = $this->mergeAnnotations($options, $classAnnotations, $arguments);
-
+            $options += $annotationsOptions;
             $options += $this->getDefaultParams();
 
             $parameters[$name] = $options;
             unset($parameters[$name]['children']);
         }
+
+        $options += array(
+            'children' => array(),
+        );
 
         foreach($options['children'] as $name => & $child) {
             $this->merge($child, $parameters, $name);

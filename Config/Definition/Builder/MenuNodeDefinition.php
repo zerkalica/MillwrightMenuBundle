@@ -39,6 +39,23 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                 ->scalarNode('label')->end()
                 ->scalarNode('translateDomain')->end()
                 ->arrayNode('translateParameters')->end()
+
+                ->arrayNode('secureParams')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('name')->end()
+                            ->scalarNode('class')->end()
+                            ->arrayNode('permissions')
+                            ->beforeNormalization()->ifString()->then(
+                                function($v) {
+                                    return preg_split('/\s*,\s*/', $v);
+                                })->end()
+                            ->prototype('scalar')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+
                 ->arrayNode('attributes')
                     ->children()
                         ->scalarNode('class')->end()
