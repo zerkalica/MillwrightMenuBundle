@@ -245,7 +245,7 @@ millwright_menu:
         <menu_name>:
             type: <menu type>
             children:
-                <items hierarchy>        
+                <items hierarchy>
 ```
 
 `items` section:

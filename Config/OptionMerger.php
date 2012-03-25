@@ -112,10 +112,8 @@ class OptionMerger implements OptionMergerInterface
                 $secureParams[$param->name] = $this->annotationToArray($param);
                 /* @var $argument \ReflectionParameter */
                 $argument  = $arguments[$param->name];
-                $class     = $argument->getDeclaringClass();
-
+                $class     = $argument->getClass();
                 $secureParams[$param->name]['class'] = $class->getName();
-
             } else if ($param instanceof Secure || $param instanceof Menu ) {
                 $options += $this->annotationToArray($param);
             }
@@ -161,7 +159,7 @@ class OptionMerger implements OptionMergerInterface
     {
         $options += array(
             'children' => array(),
-            'secureParams' => array('class' => null)
+            'secureParams' => array()
         );
 
         if (empty($options['roles'])) {

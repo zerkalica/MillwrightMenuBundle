@@ -136,7 +136,6 @@ class MenuFactory implements MenuFactoryInterface
                         $entityId    = $routeParameters[$paramName];
                         $entityClass = $secureParam['class'];
                         $object      = new ObjectIdentity($entityId, $entityClass);
-
                         if(!$this->security->isGranted($permissions, $object)) {
                             $display = false;
                             break;
