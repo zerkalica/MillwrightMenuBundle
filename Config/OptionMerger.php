@@ -156,16 +156,16 @@ class OptionMerger implements OptionMergerInterface
      */
     protected function merge(array & $options, array & $parameters, $name)
     {
-        $itemParameters  = isset($parameters[$name]) ? $parameters[$name] : array();
-        foreach(array_keys($options) as $key) {
-            if(empty($options[$key])) {
-                if(!empty($itemParameters[$key])) {
-                    $options[$key] = $itemParameters[$key];
-                } else {
-                    unset($options[$key]);
-                }
+        foreach($options as $key => $value) {
+            if(empty($value)) {
+                unset($options[$key]);
             }
         }
+
+        if(isset($parameters[$name])) {
+            $options += $parameters[$name];
+        }
+
         if($name) {
             $annotationsOptions = array();
             $classAnnotations = array();
@@ -199,7 +199,6 @@ class OptionMerger implements OptionMergerInterface
         $options += array(
             'children' => array(),
         );
-
         foreach($options['children'] as $name => & $child) {
             $this->merge($child, $parameters, $name);
         }
@@ -211,10 +210,19 @@ class OptionMerger implements OptionMergerInterface
      */
     public function normalize(array $menuOptions)
     {
+        foreach($menuOptions['items'] as & $item) {
+            foreach($item as $key => $value) {
+                if(empty($value)) {
+                    unset($item[$key]);
+                }
+            }
+        }
+
         foreach($menuOptions['tree'] as $name => & $menu) {
             $this->merge($menu, $menuOptions['items'], $name);
             $menuOptions['items'][$name] = null;
         }
+
 
         return $menuOptions;
     }
