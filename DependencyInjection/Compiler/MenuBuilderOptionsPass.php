@@ -20,9 +20,9 @@ class MenuBuilderOptionsPass implements CompilerPassInterface
         $menuContainers = new \SplPriorityQueue();
 
         foreach ($container->findTaggedServiceIds('millwright_menu.menu_options') as $id => $tags) {
-
-            $priority = isset($attributes[0]['order']) ? $attributes[0]['order'] : 0;
             $definition = $container->getDefinition($id);
+            $attributes = $definition->getTag('millwright_menu.menu_options');
+            $priority   = isset($attributes[0]['order']) ? $attributes[0]['order'] : 0;
 
             $data = $definition->getArgument(0);
             $menuContainers->insert($data, $priority);
