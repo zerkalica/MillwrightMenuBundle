@@ -56,6 +56,10 @@ class Helper
                 unset($routeParams['_default']);
                 $defaultRouteParams =  $defaultRouteParams['_default'];
             }
+            if(isset($defaultRouteParams['_routes'])) {
+                $routeParams = $defaultRouteParams['_routes'];
+                unset($defaultRouteParams['_routes']);
+            }
 
             $menu = $this->builder->createMenu($menuName, $defaultRouteParams, $routeParams);
 
