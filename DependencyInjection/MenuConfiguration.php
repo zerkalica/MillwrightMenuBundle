@@ -40,6 +40,7 @@ class MenuConfiguration implements ConfigurationInterface
                     ->arrayNode('attributes')
                         ->children()
                             ->scalarNode('class')->end()
+                            ->scalarNode('id')->end()
                         ->end()
                     ->end()
                     ->scalarNode('renderer')->defaultValue(null)->end()

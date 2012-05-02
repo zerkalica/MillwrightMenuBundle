@@ -57,7 +57,7 @@ class MenuBuilder implements MenuBuilderInterface
     public function __construct(
         MenuFactoryInterface  $factory,
         OptionMergerInterface $merger,
-        ContainerInterface       $container,
+        ContainerInterface    $container,
         array                 $options,
         array                 $menuOptions
     ) {

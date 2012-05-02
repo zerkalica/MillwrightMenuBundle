@@ -236,6 +236,10 @@ class MenuFactory implements MenuFactoryInterface
             ? $this->routeParams[$name]
             : $this->defaultRouteParams;
 
+        if(!$params && isset($options['routeParameters'])) {
+            $params = $options['routeParameters'];
+        }
+
         $this->setContext($item, $params, $options);
 
         return $item;

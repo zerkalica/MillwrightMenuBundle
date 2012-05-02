@@ -91,6 +91,12 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                 ->scalarNode('route')->end()
                 ->scalarNode('type')->end()
                 ->booleanNode('routeAbsolute')->end()
+                ->arrayNode('routeParameters')
+                    ->children()
+                        //@todo fix this to variable parameter
+                        ->scalarNode('user')->end()
+                    ->end()
+                ->end()
                 ->booleanNode('showNonAuthorized')->end()
                 ->booleanNode('showAsText')->end();
     }

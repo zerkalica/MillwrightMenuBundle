@@ -223,7 +223,6 @@ class OptionMerger implements OptionMergerInterface
             $menuOptions['items'][$name] = null;
         }
 
-
         return $menuOptions;
     }
 }
