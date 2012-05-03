@@ -38,8 +38,9 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                     ->end()
                 ->scalarNode('label')->end()
                 ->scalarNode('translateDomain')->end()
-                ->arrayNode('translateParameters')->end()
-
+                ->arrayNode('translateParameters')
+                    ->useAttributeAsKey('translateParameters')->prototype('scalar')->end()
+                ->end()
                 ->arrayNode('secureParams')
                     ->prototype('array')
                         ->children()
@@ -92,10 +93,7 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                 ->scalarNode('type')->end()
                 ->booleanNode('routeAbsolute')->end()
                 ->arrayNode('routeParameters')
-                    ->children()
-                        //@todo fix this to variable parameter
-                        ->scalarNode('user')->end()
-                    ->end()
+                    ->useAttributeAsKey('routeParameters')->prototype('scalar')->end()
                 ->end()
                 ->booleanNode('showNonAuthorized')->end()
                 ->booleanNode('showAsText')->end();
