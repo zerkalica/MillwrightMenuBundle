@@ -1,0 +1,18 @@
+{
+    "name": "zerkalica/millwright-menu-bundle",
+    "description": "Config abstraction for knp menu bundle",
+    "authors": [
+        {
+            "name": "Stefan Zerkalica",
+            "email": "zerkalica@gmail.com"
+        }
+    ],
+    "require": {
+        "knplabs/knp-menu-bundle": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Millwright\\MenuBundle": ""
+        }
+    }
+}
