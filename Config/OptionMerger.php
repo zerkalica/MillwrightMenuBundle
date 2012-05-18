@@ -15,6 +15,7 @@ use Doctrine\Common\Annotations\Reader;
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Millwright\MenuBundle\Annotation\Menu;
+use Millwright\MenuBundle\Annotation\MenuDefault;
 
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
@@ -114,7 +115,7 @@ class OptionMerger implements OptionMergerInterface
                 $argument  = $arguments[$param->name];
                 $class     = $argument->getClass();
                 $options['secureParams'][$param->name]['class'] = $class->getName();
-            } else if ($param instanceof Secure || $param instanceof Menu ) {
+            } else if ($param instanceof Secure || $param instanceof Menu || $param instanceof MenuDefault) {
                 $options += $this->annotationToArray($param);
             }
         }
