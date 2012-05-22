@@ -3,3 +3,18 @@
 {% block label %}
 {{ item.label|trans(item.getExtra('translateParameters', {}), item.getExtra('translateDomain', 'messages')) }}
 {% endblock %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        {% for item in breadcrumbs%}
+        <li>
+            {%- if item.uri is not empty and (not item.current) %}
+            {{ block('linkElement') }}
+            <span class="divider">/</span>
+            {%- else %}
+            {{ block('spanElement') }}
+            {%- endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
