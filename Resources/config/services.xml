@@ -11,7 +11,7 @@
         
         <parameter key="millwright_menu.helper.class">Millwright\MenuBundle\Twig\Helper</parameter>
         <parameter key="millwright_menu.twig.extension.class">Millwright\MenuBundle\Twig\MenuExtension</parameter>
-        <parameter key="millwright_menu.renderer.twig.template">MillwrightMenuBundle:Default:knp_menu_breadcrumbs.html.twig</parameter>
+        <parameter key="millwright_menu.renderer.twig.template">MillwrightMenuBundle:Default:knp_menu.html.twig</parameter>
         <parameter key="millwright_menu.renderer.twig.class">Millwright\MenuBundle\Menu\Renderer\TwigRenderer</parameter>
         <parameter key="millwright_menu.templating.helper.class">Millwright\MenuBundle\Templating\Helper\MenuHelper</parameter>
         
