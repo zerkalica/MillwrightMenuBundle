@@ -60,6 +60,8 @@ class OptionMerger implements OptionMergerInterface
             'roles'               => array(),
             'route'               => null,
             'routeAbsolute'       => false,
+            'routeAcceptedParameters' => array(),
+            'routeRequiredParameters' => array(),
             'showNonAuthorized'   => false,
             'showAsText'          => false,
             'translateDomain'    => null,
@@ -72,20 +74,20 @@ class OptionMerger implements OptionMergerInterface
      * Get action method by route name
      *
      * @param  string $name route name
-     * @return \ReflectionMethod
+     * @return array array(\ReflectionMethod, array())
      */
-    protected function getActionMethod($name)
+    protected function getRouteInfo($name)
     {
         //@todo do not use getRouteCollection - not interface method
         // howto get controller and action name by route name ?
         $route = $this->router->getRouteCollection()->get($name);
         if (!$route) {
-            return array();
+            return null;
         }
 
         $defaults = $route->getDefaults();
         if (!isset($defaults['_controller'])) {
-            return array();
+            return null;
         }
 
         $params = explode('::', $defaults['_controller']);
@@ -93,7 +95,16 @@ class OptionMerger implements OptionMergerInterface
         $class  = new \ReflectionClass($params[0]);
         $method = $class->getMethod($params[1]);
 
-        return $method;
+        unset($defaults['_controller']);
+
+        $compiledRoute = $route->compile();
+        $tokens = $compiledRoute->getVariables();
+
+        return array(
+            'method' => $method,
+            'routeAcceptedParameters' => array_flip(array_merge(array_keys($defaults), $tokens)),
+            'routeRequiredParameters' => array_merge(array_keys($route->getRequirements()), $tokens)
+        );
     }
 
     /**
@@ -173,10 +184,16 @@ class OptionMerger implements OptionMergerInterface
             $arguments        = array();
 
             if (empty($options['uri'])) {
-                $route = isset($options['route']) ? $options['route'] : $name;
-                $method = $this->getActionMethod($route);
-                if ($method) {
+                $route     = isset($options['route']) ? $options['route'] : $name;
+                $routeInfo = $this->getRouteInfo($route);
+
+                if ($routeInfo) {
+                    $method = $routeInfo['method'];
+                    unset($routeInfo['method']);
+
                     $options += array('route' => $route);
+                    $options += $routeInfo;
+
                     foreach ($method->getParameters() as $argument) {
                         $arguments[$argument->getName()] = $argument;
                     }
