@@ -8,6 +8,7 @@ use Knp\Menu\Provider\MenuProviderInterface;
 
 class MenuExtension extends \Twig_Extension
 {
+    /** @var Helper */
     protected $helper;
 
     /**
@@ -23,6 +24,7 @@ class MenuExtension extends \Twig_Extension
         return array(
             'millwright_menu_get' => new \Twig_Function_Method($this, 'get'),
             'millwright_menu_render' => new \Twig_Function_Method($this, 'render', array('is_safe' => array('html'))),
+            'millwright_link_render' => new \Twig_Function_Method($this, 'renderLink', array('is_safe' => array('html'))),
         );
     }
 
@@ -50,6 +52,18 @@ class MenuExtension extends \Twig_Extension
     public function render($menu, array $routeParams = array(), array $options = array(), $renderer = null)
     {
         return $this->helper->render($menu, $routeParams, $options, $renderer);
+    }
+
+    /**
+     * @param       $name link name in menu container
+     * @param array $routeParams
+     * @param array $options
+     * @param null  $renderer
+     * @return mixed
+     */
+    public function renderLink($name, array $routeParams = array(), array $options = array(), $renderer = null)
+    {
+        return $this->helper->render($name, $routeParams, $options, $renderer, true);
     }
 
     /**

@@ -49,10 +49,9 @@ class TwigRenderer implements RendererInterface
             $template = $this->environment->loadTemplate($template);
         }
 
-        $block = 'breadcrumb';
+        $block = isset($options['block']) ? $options['block'] : 'root';
+        $data  = ($block == 'breadcrumb') ? $item->getCurrentItem()->getBreadcrumbsArray() : $item;
 
-        $breadcrumbsArray = $item->getCurrentItem()->getBreadcrumbsArray();
-
-        return $template->renderBlock($block, array('breadcrumbs' => $breadcrumbsArray, 'options' => $options));
+        return $template->renderBlock($block, array('item' => $data, 'options' => $options));
     }
 }

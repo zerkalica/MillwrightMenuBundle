@@ -40,7 +40,7 @@
         </service>
 
         <service id="millwright_menu.renderer.twig" class="%millwright_menu.renderer.twig.class%">
-            <tag name="knp_menu.renderer" alias="millwright_breadcrumbs" />
+            <tag name="knp_menu.renderer" alias="millwright_renderer" />
             <argument type="service" id="twig" />
             <argument>%millwright_menu.renderer.twig.template%</argument>
             <argument>%knp_menu.renderer.twig.options%</argument>

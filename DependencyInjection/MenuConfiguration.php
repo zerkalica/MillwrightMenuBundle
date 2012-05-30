@@ -54,6 +54,7 @@ class MenuConfiguration implements ConfigurationInterface
                             ->scalarNode('firstClass')->end()
                             ->scalarNode('lastClass')->end()
                             ->scalarNode('compressed')->end()
+                            ->scalarNode('block')->end()
                             ->scalarNode('rootClass')->end()
                         ->end()
                     ->end()

@@ -2,13 +2,13 @@
 
 {% block label %}
 {{ item.label|trans(item.getExtra('translateParameters', {}), item.getExtra('translateDomain', 'messages')) }}
-{% endblock %}
+{% endblock label %}
 
 {% block breadcrumb %}
     <ul class="breadcrumb">
-        {% for item in breadcrumbs%}
+        {% for element in item %}
         <li>
-            {%- if item.uri is not empty and (not item.current) %}
+            {%- if element.uri is not empty and (not element.current) %}
             {{ block('linkElement') }}
             <span class="divider">/</span>
             {%- else %}
@@ -17,4 +17,8 @@
         </li>
         {% endfor %}
     </ul>
-{% endblock %}
+{% endblock breadcrumb %}
+
+{% block link %}
+    <a href="{{ item.uri }}">{{ item.name }}</a>
+{% endblock link %}
