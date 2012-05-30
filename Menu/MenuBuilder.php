@@ -124,7 +124,7 @@ class MenuBuilder implements MenuBuilderInterface
      *
      * @param  array $defaultRouteParams
      * @param  array|[] $routeParams
-     * @return MenuFactoryIterface
+     * @return MenuFactoryInterface
      */
     protected function createFactory(array $defaultRouteParams, array $routeParams = array())
     {

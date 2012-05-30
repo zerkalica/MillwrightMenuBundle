@@ -5,6 +5,7 @@
 {% endblock label %}
 
 {% block breadcrumb %}
+<<<<<<< HEAD
 <ul class="breadcrumb">
     {% for element in item %}
     <li>
@@ -26,4 +27,22 @@
     {%- else %}
         <span class="link" id="{{ item.name }}">{{ label }}</span>
     {%- endif %}
+=======
+    <ul class="breadcrumb">
+        {% for element in item %}
+        <li>
+            {%- if element.uri is not empty and (not element.current) %}
+            {{ block('linkElement') }}
+            <span class="divider">/</span>
+            {%- else %}
+            {{ block('spanElement') }}
+            {%- endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock breadcrumb %}
+
+{% block link %}
+    <a href="{{ item.uri }}">{{ item.name }}</a>
+>>>>>>> 1253c28... updated helpers
 {% endblock link %}

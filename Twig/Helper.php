@@ -37,18 +37,17 @@ class Helper
      * @param \Knp\Menu\ItemInterface|string $menu
      * @param array $path
      * @param array $routeParams
+     * @param bool $link true - get single link, false - build all child items
      * @return \Knp\Menu\ItemInterface
      * @throws \InvalidArgumentException when the path is invalid
      * @throws \BadMethodCallException when there is no menu provider and the menu is given by name
      */
-    public function get($menu, array $path = array(), array $defaultRouteParams = array())
+    public function get($menu, array $path = array(), array $defaultRouteParams = array(), $link = false)
     {
         if (!$menu instanceof ItemInterface) {
             if (null === $this->builder) {
                 throw new \BadMethodCallException('A menu provider must be set to retrieve a menu');
             }
-
-            $menuName = $menu;
 
             $routeParams = array();
             if(isset($defaultRouteParams['_default'])) {
@@ -61,7 +60,9 @@ class Helper
                 unset($defaultRouteParams['_routes']);
             }
 
-            $menu = $this->builder->createMenu($menuName, $defaultRouteParams, $routeParams);
+            $menu = $link
+                ? $this->builder->createLink($menu, $defaultRouteParams)
+                : $this->builder->createMenu($menu, $defaultRouteParams, $routeParams);
 
             if (!$menu instanceof ItemInterface) {
                 throw new \LogicException(sprintf('The menu "%s" exists, but is not a valid menu item object. Check where you created the menu to be sure it returns an ItemInterface object.', $menuName));
@@ -91,9 +92,10 @@ class Helper
      * @param array $routeParams
      * @param array $options
      * @param string $renderer
+     * @param bool $link true - get single link, false - build all child items
      * @return string
      */
-    public function render($menu, array $routeParams = array(), array $options = array(), $renderer =  null)
+    public function render($menu, array $routeParams = array(), array $options = array(), $renderer =  null, $link = false)
     {
         if (!$menu instanceof ItemInterface) {
             $path = array();
@@ -105,7 +107,7 @@ class Helper
                 $menu = array_shift($path);
             }
 
-            $menu = $this->get($menu, $path, $routeParams);
+            $menu = $this->get($menu, $path, $routeParams, $link);
         }
 
 
