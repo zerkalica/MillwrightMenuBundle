@@ -122,6 +122,11 @@ class Helper
             }
         }
 
+        if(!$type) {
+            $renderer = 'millwright_renderer';
+            $options['block'] = 'link';
+        }
+
         return $this->rendererProvider->get($renderer)->render($menu, $options);
     }
 }
