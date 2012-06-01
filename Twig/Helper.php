@@ -114,10 +114,17 @@ class Helper
         $type = $menu->getExtra('type');
         if($type && isset($this->rendererOptions[$type])) {
             $rendererParams = $this->rendererOptions[$type];
-            $options += $rendererParams['rendererOptions'];
+            if (isset($rendererParams['rendererOptions'])) {
+                $options += $rendererParams['rendererOptions'];
+            }
             if ($renderer === null) {
                 $renderer = $rendererParams['renderer'];
             }
+        }
+
+        if(!$type) {
+            $renderer = 'millwright_renderer';
+            $options['block'] = 'link';
         }
 
         return $this->rendererProvider->get($renderer)->render($menu, $options);

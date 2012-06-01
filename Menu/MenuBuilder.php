@@ -136,7 +136,14 @@ class MenuBuilder implements MenuBuilderInterface
         $factory = clone $this->factory;
 
         if (!$this->currentUri) {
-            $this->currentUri = $this->container->get('request')->getRequestUri();
+            $currentUri = $this->container->get('request')->getRequestUri();
+
+            // We remove URI params (after '?') for building correct breadcrumbs and menu
+            $pos = strpos($currentUri, '?');
+            if($pos !== false) {
+                $currentUri = substr($currentUri, 0, $pos);
+            }
+            $this->currentUri = $currentUri;
         }
 
         $factory

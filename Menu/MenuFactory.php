@@ -146,12 +146,19 @@ class MenuFactory implements MenuFactoryInterface
         }
 
         if ($options['route'] && !$rootItem) {
-            $uri = $this->router->generate(
-                $options['route'],
-                $routeParameters,
-                $options['routeAbsolute']
-            );
-            $item->setUri($uri);
+            $acceptedRouteParameters = array_intersect_key($routeParameters, $options['routeAcceptedParameters']);
+
+            //@todo refactor this compare logic, do routeAcceptedParameters and routeRequiredParameters to same format
+            if ($options['routeRequiredParameters'] === array_keys($acceptedRouteParameters)) {
+                $uri = $this->router->generate(
+                    $options['route'],
+                    $acceptedRouteParameters,
+                    $options['routeAbsolute']
+                );
+                $item->setUri($uri);
+            } else {
+                $display = false;
+            }
         }
 
         if(!$display) {
@@ -210,6 +217,8 @@ class MenuFactory implements MenuFactoryInterface
             'secureParams' => array(),
             'route' => null,
             'routeAbsolute' => false,
+            'routeAcceptedParameters' => array(),
+            'routeRequiredParameters' => array(),
             'showNonAuthorized' => false,
             'showAsText' => false,
         );
