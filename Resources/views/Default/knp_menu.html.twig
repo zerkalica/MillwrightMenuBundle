@@ -2,9 +2,6 @@
 
 {% block label %}
 {{ item.label|trans(item.getExtra('translateParameters', {}), item.getExtra('translateDomain', 'messages')) }}
-<<<<<<< HEAD
-{% endblock %}
-=======
 {% endblock label %}
 
 {% block breadcrumb %}
@@ -30,4 +27,3 @@
         <span class="link" id="{{ item.name }}">{{ label }}</span>
     {%- endif %}
 {% endblock link %}
->>>>>>> 294943e... updated link helper
