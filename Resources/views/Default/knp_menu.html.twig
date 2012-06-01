@@ -2,4 +2,32 @@
 
 {% block label %}
 {{ item.label|trans(item.getExtra('translateParameters', {}), item.getExtra('translateDomain', 'messages')) }}
+<<<<<<< HEAD
 {% endblock %}
+=======
+{% endblock label %}
+
+{% block breadcrumb %}
+<ul class="breadcrumb">
+    {% for element in item %}
+    <li>
+        {%- if element.uri is not empty and (not element.current) %}
+        {{ block('linkElement') }}
+        <span class="divider">/</span>
+        {%- else %}
+        {{ block('spanElement') }}
+        {%- endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock breadcrumb %}
+
+{% block link %}
+    {% set label = item.label|trans(item.getExtra('translateParameters', {}), item.getExtra('translateDomain', 'messages')) %}
+    {%- if item.uri is not empty  %}
+        <a href="{{ item.uri }}" id="{{ item.name }}">{{ label }}</a>
+    {%- else %}
+        <span class="link" id="{{ item.name }}">{{ label }}</span>
+    {%- endif %}
+{% endblock link %}
+>>>>>>> 294943e... updated link helper
