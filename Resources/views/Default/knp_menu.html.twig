@@ -1,23 +1,28 @@
 {% extends 'knp_menu.html.twig' %}
 
 {% block label %}
-{{ item.label|trans(item.getExtra('translateParameters', {}), item.getExtra('translateDomain', 'messages')) }}
+    {{ item.label|trans(item.getExtra('translateParameters', {}), item.getExtra('translateDomain', 'messages')) }}
 {% endblock label %}
 
 {% block breadcrumb %}
 <ul class="breadcrumb">
     {% for element in item %}
     <li>
-        {%- if element.uri is not empty and (not element.current) %}
-        {{ block('linkElement') }}
-        <span class="divider">/</span>
-        {%- else %}
-        {{ block('spanElement') }}
-        {%- endif %}
+        {{ block('breadcrumb_element') }}
     </li>
     {% endfor %}
 </ul>
 {% endblock breadcrumb %}
+
+{% block breadcrumb_element %}
+    {% set item = element %}
+    {%- if item.uri is not empty and (not item.current) %}
+        {{ block('linkElement') }}
+        <span class="divider">/</span>
+    {%- else %}
+        {{ block('spanElement') }}
+    {%- endif %}s
+{% endblock breadcrumb_element %}
 
 {% block link %}
     {% set label = item.label|trans(item.getExtra('translateParameters', {}), item.getExtra('translateDomain', 'messages')) %}

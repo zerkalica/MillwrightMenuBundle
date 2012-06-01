@@ -2,8 +2,8 @@
 
 namespace Millwright\MenuBundle\Templating\Helper;
 
-use Symfony\Component\Templating\Helper\Helper as TemplatingHelper;
 use Millwright\MenuBundle\Twig\Helper;
+use Symfony\Component\Templating\Helper\Helper as TemplatingHelper;
 
 class MenuHelper extends TemplatingHelper
 {

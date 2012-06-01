@@ -110,7 +110,6 @@ class Helper
             $menu = $this->get($menu, $path, $routeParams, $link);
         }
 
-
         $type = $menu->getExtra('type');
         if($type && isset($this->rendererOptions[$type])) {
             $rendererParams = $this->rendererOptions[$type];
