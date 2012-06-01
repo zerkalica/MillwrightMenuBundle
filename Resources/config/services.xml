@@ -8,36 +8,34 @@
         <parameter key="millwright_menu.factory.class">Millwright\MenuBundle\Menu\MenuFactory</parameter>
         <parameter key="millwright_menu.main.class">Millwright\MenuBundle\Menu\MenuItem</parameter>
         <parameter key="millwright_menu.merger.class">Millwright\MenuBundle\Config\OptionMerger</parameter>
-        
+
         <parameter key="millwright_menu.helper.class">Millwright\MenuBundle\Twig\Helper</parameter>
         <parameter key="millwright_menu.twig.extension.class">Millwright\MenuBundle\Twig\MenuExtension</parameter>
         <parameter key="millwright_menu.templating.helper.class">Millwright\MenuBundle\Templating\Helper\MenuHelper</parameter>
-        
+
         <parameter key="millwright_menu.options.class">Millwright\MenuBundle\Menu\MenuOptions</parameter>
-        
+
         <parameter key="millwright_menu.cache_warmer.class">Millwright\MenuBundle\CacheWarmer\MenuCacheWarmer</parameter>
-        
+
     </parameters>
 
     <services>
-    
+
         <service id="millwright_menu.twig.extension" class="%millwright_menu.twig.extension.class%" public="false">
             <tag name="twig.extension" />
             <argument type="service" id="millwright_menu.helper" />
         </service>
-    
+
         <service id="millwright_menu.helper" class="%millwright_menu.helper.class%" public="false">
             <argument type="service" id="knp_menu.renderer_provider" />
             <argument type="service" id="millwright_menu.builder" />
             <argument type="collection" />
         </service>
-    
+
         <service id="millwright_menu.templating.helper" class="%millwright_menu.templating.helper.class%">
             <tag name="templating.helper" alias="millwright_menu" />
             <argument type="service" id="millwright_menu.helper" />
         </service>
-<<<<<<< HEAD
-=======
 
         <service id="millwright_menu.renderer.twig" class="%millwright_menu.renderer.twig.class%">
             <tag name="knp_menu.renderer" alias="millwright_renderer" />
@@ -45,8 +43,7 @@
             <argument>%millwright_menu.renderer.twig.template%</argument>
             <argument>%knp_menu.renderer.twig.options%</argument>
         </service>
->>>>>>> 1253c28... updated helpers
-    
+
         <service id="millwright_menu.factory" class="%millwright_menu.factory.class%">
             <argument type="service" id="router" />
             <argument type="service" id="security.context" />
@@ -68,12 +65,12 @@
             </argument>
             <argument type="collection" />
         </service>
-        
+
         <service id="millwright_menu.cache_warmer" class="%millwright_menu.cache_warmer.class%" public="false">
             <tag name="kernel.cache_warmer" />
             <argument type="service" id="millwright_menu.builder" />
         </service>
-        
+
         <service id="millwright_menu.options" class="%millwright_menu.options.class%">
             <tag name="millwright_menu.menu_options" order="100"/>
             <argument type="collection">
