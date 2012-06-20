@@ -184,7 +184,7 @@ class MenuFactory implements MenuFactoryInterface
 
             'type' => null,
             'translateDomain' => null,
-            'translateParamteters' => array(),
+            'translateParameters' => array(),
 
             'roles' => array(),
             'secureParams' => array(),

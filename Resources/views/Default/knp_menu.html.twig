@@ -16,7 +16,7 @@
 
 {% block breadcrumb_element %}
     {% set item = element %}
-    {%- if item.uri is not empty and (not item.current) %}
+    {%- if item.uri is not empty and (not matcher.isCurrent(item)) %}
         {{ block('linkElement') }}
         <span class="divider">/</span>
     {%- else %}
