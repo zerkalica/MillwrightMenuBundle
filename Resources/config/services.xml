@@ -43,6 +43,7 @@
             <tag name="knp_menu.renderer" alias="millwright_renderer" />
             <argument type="service" id="twig" />
             <argument>%millwright_menu.renderer.twig.template%</argument>
+            <argument type="service" id="knp_menu.matcher" />
             <argument>%knp_menu.renderer.twig.options%</argument>
         </service>
         <service id="millwright_menu.factory" class="%millwright_menu.factory.class%">
@@ -58,6 +59,7 @@
         <service id="millwright_menu.builder" class="%millwright_menu.menu_builder.class%">
             <argument type="service" id="millwright_menu.factory" />
             <argument type="service" id="millwright_menu.merger" />
+            <argument type="service" id="knp_menu.matcher" />
             <argument type="service" id="service_container" />
             <argument type="collection">
                 <argument key="generator_cache_class">%millwright_menu.generator_cache_class%</argument>

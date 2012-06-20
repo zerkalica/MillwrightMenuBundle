@@ -47,6 +47,7 @@ class MenuConfiguration implements ConfigurationInterface
                     ->arrayNode('rendererOptions')
                         ->children()
                             ->scalarNode('template')->end()
+                            ->scalarNode('clear_matcher')->defaultValue(false)->end()
                             ->scalarNode('depth')->end()
                             ->scalarNode('currentAsLink')->end()
                             ->scalarNode('currentClass')->end()

@@ -70,7 +70,7 @@ class MenuBuilderOptionsPass implements CompilerPassInterface
         }
 
         $container->getDefinition('millwright_menu.builder')
-            ->replaceArgument(4, $config);
+            ->replaceArgument(5, $config);
     }
 
     /**

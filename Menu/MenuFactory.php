@@ -51,37 +51,12 @@ class MenuFactory implements MenuFactoryInterface
      */
     protected $security;
 
-    /**
-     * @var string
-     */
-    protected $currentUri;
-
     public function __construct(
         RouterInterface          $router,
         SecurityContextInterface $security
     ) {
         $this->router      = $router;
         $this->security    = $security;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::setCurrentUri()
-     */
-    public function setCurrentUri($currentUri)
-    {
-        $this->currentUri = $currentUri;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::getCurrentUri()
-     */
-    public function getCurrentUri()
-    {
-        return $this->currentUri;
     }
 
     /**
@@ -174,8 +149,6 @@ class MenuFactory implements MenuFactoryInterface
         if(!$display) {
             $item->setDisplay(false);
         }
-
-        $item->setCurrentUri($this->currentUri);
 
         return $this;
     }

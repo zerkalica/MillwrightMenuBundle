@@ -13,6 +13,9 @@ use Symfony\Component\Config\ConfigCache;
 use Millwright\MenuBundle\Config\OptionMergerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Knp\Menu\Matcher\MatcherInterface;
+use Knp\Menu\Matcher\Voter\UriVoter;
+
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
  * @category    Millwright
@@ -53,10 +56,12 @@ class MenuBuilder implements MenuBuilderInterface
     protected  $container;
 
     protected $currentUri;
+    protected $matcher;
 
     public function __construct(
         MenuFactoryInterface  $factory,
         OptionMergerInterface $merger,
+        MatcherInterface      $matcher,
         ContainerInterface    $container,
         array                 $options,
         array                 $menuOptions
@@ -66,6 +71,7 @@ class MenuBuilder implements MenuBuilderInterface
         $this->options     = $options;
         $this->menuOptions = $menuOptions;
         $this->container   = $container;
+        $this->matcher     = $matcher;
     }
 
     public function loadCache($cacheDir = null)
@@ -135,6 +141,18 @@ class MenuBuilder implements MenuBuilderInterface
         //4. remove per item routeParams, use only per menu defaultRouteParams
         $factory = clone $this->factory;
 
+        $this->addVoter();
+
+        $factory
+            ->setDefaultRouteParams($defaultRouteParams)
+            ->setRouteParams($routeParams)
+        ;
+
+        return $factory;
+    }
+
+    protected function addVoter()
+    {
         if (!$this->currentUri) {
             $currentUri = $this->container->get('request')->getRequestUri();
 
@@ -144,15 +162,8 @@ class MenuBuilder implements MenuBuilderInterface
                 $currentUri = substr($currentUri, 0, $pos);
             }
             $this->currentUri = $currentUri;
-        }
-
-        $factory
-            ->setCurrentUri($this->currentUri)
-            ->setDefaultRouteParams($defaultRouteParams)
-            ->setRouteParams($routeParams)
-        ;
-
-        return $factory;
+            $this->matcher->addVoter(new UriVoter($currentUri));
+        };
     }
 
     /**
