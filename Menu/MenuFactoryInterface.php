@@ -51,7 +51,24 @@ interface MenuFactoryInterface extends FactoryInterface
      *             'nodeId' => 2,
      *         );
      *     </code>
-     * @return MenuFactory
+     * @return MenuFactoryInterface
      */
     public function setDefaultRouteParams(array $defaultRouteParams);
+
+    /**
+     * Set extra parameters, the will set to all items on menu creation
+     *
+     * @param array $extra
+     *
+     * @example
+     *     <code>
+     *         $extra = array(
+     *             'translationParameters' => '',
+     *             'translationDomain' => '',
+     *         );
+     *     </code>
+     *
+     * @return MenuFactoryInterface
+     */
+    public function setDefaultExtraParams(array $extra);
 }

@@ -23,13 +23,17 @@ interface MenuBuilderInterface
      * @param  Request $request
      * @param  array   $defaultRouteParams default route params for options
      * @param  array   $routeParams
+     * @param  array   $extra
+     *
      * @see MenuFactoryInterface::setRouteParams()
      * @see MenuFactoryInterface::setDefaultRouteParams()
+     *
      * @return MenuItemInterface
      */
     public function createMenu($name,
         array $defaultRouteParams = array(),
-        array $routeParams = array()
+        array $routeParams = array(),
+        array $extra = array()
     );
 
     /**
@@ -38,12 +42,14 @@ interface MenuBuilderInterface
      * @param  string  $name name of menu item
      * @param  array   $defaultRouteParams default route params for options
      * @param  array   $routeParams
+     * @param  array   $extra
+     *
      * @see MenuFactoryInterface::setRouteParams()
      * @see MenuFactoryInterface::setDefaultRouteParams()
+     *
      * @return MenuItemInterface
      */
-    public function createLink($name, array $routeParams = array());
-
+    public function createLink($name, array $routeParams = array(), array $extra = array());
 
     /**
      * Load cache

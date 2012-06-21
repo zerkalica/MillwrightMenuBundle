@@ -130,9 +130,10 @@ class MenuBuilder implements MenuBuilderInterface
      *
      * @param  array $defaultRouteParams
      * @param  array|[] $routeParams
+     * @param  array $extra
      * @return MenuFactoryInterface
      */
-    protected function createFactory(array $defaultRouteParams, array $routeParams = array())
+    protected function createFactory(array $defaultRouteParams, array $routeParams = array(), array $extra = array())
     {
         //@todo How to pass route params ?
         //1. remove factory from service and create new instance here ?
@@ -146,6 +147,7 @@ class MenuBuilder implements MenuBuilderInterface
         $factory
             ->setDefaultRouteParams($defaultRouteParams)
             ->setRouteParams($routeParams)
+            ->setDefaultExtraParams($extra)
         ;
 
         return $factory;
@@ -172,11 +174,12 @@ class MenuBuilder implements MenuBuilderInterface
      */
     public function createMenu($name,
         array $defaultRouteParams = array(),
-        array $routeParams = array()
+        array $routeParams = array(),
+        array $extra = array()
     )
     {
         $options = $this->getMenuOptions($name);
-        $factory = $this->createFactory($defaultRouteParams, $routeParams);
+        $factory = $this->createFactory($defaultRouteParams, $routeParams, $extra);
 
         return $factory->createFromArray($options);
     }
@@ -185,10 +188,10 @@ class MenuBuilder implements MenuBuilderInterface
      * {@inheritdoc}
      * @see Millwright\MenuBundle\Menu.MenuBuilderInterface::createLink()
      */
-    public function createLink($name, array $defaultRouteParams = array())
+    public function createLink($name, array $defaultRouteParams = array(), array $extra = array())
     {
         $options = $this->getLinkOptions($name);
-        $factory = $this->createFactory($defaultRouteParams);
+        $factory = $this->createFactory($defaultRouteParams, $extra);
 
         return $factory->createItem($name, $options);
     }

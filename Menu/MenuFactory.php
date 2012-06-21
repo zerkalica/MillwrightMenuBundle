@@ -51,6 +51,11 @@ class MenuFactory implements MenuFactoryInterface
      */
     protected $security;
 
+    /**
+     * @var array
+     */
+    protected $extra = array();
+
     public function __construct(
         RouterInterface          $router,
         SecurityContextInterface $security
@@ -77,6 +82,16 @@ class MenuFactory implements MenuFactoryInterface
     public function setRouteParams(array $routeParams)
     {
         $this->routeParams = $routeParams;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setDefaultExtraParams(array $extra)
+    {
+        $this->extra = $extra;
 
         return $this;
     }
@@ -198,6 +213,14 @@ class MenuFactory implements MenuFactoryInterface
 
         $item = $this->createItemInstance($name);
 
+        $extra = array(
+            'type' => $options['type'],
+            'translateDomain' => $options['translateDomain'],
+            'translateParameters' => $options['translateParameters'],
+        );
+
+        $extra = array_merge($extra, $this->extra);
+
         $item
             ->setUri($options['uri'])
             ->setLabel($options['label'])
@@ -207,11 +230,7 @@ class MenuFactory implements MenuFactoryInterface
             ->setLabelAttributes($options['labelAttributes'])
             ->setDisplay($options['display'])
             ->setDisplayChildren($options['displayChildren'])
-            ->setExtras(array(
-                'type' => $options['type'],
-                'translateDomain' => $options['translateDomain'],
-                'translateParameters' => $options['translateParameters']
-            ))
+            ->setExtras($extra)
         ;
 
         $params = isset($this->routeParams[$name])
