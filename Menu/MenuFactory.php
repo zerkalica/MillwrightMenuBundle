@@ -18,6 +18,8 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
+use Symfony\Component\Security\Acl\Model\ObjectIdentityInterface;
+use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
@@ -32,14 +34,14 @@ class MenuFactory implements MenuFactoryInterface
      *
      * @var array
      */
-    protected $defaultRouteParams = array();
+    protected $defaultrouteParameters = array();
 
     /**
      * Per item route params
      *
      * @var array
      */
-    protected $routeParams = array();
+    protected $routeParameters = array();
 
     /**
      * @var RouterInterface
@@ -51,37 +53,44 @@ class MenuFactory implements MenuFactoryInterface
      */
     protected $security;
 
+    protected $aclProvider;
+
     /**
      * @var array
      */
     protected $extra = array();
 
     public function __construct(
-        RouterInterface          $router,
-        SecurityContextInterface $security
-    ) {
+        RouterInterface $router,
+        SecurityContextInterface $security,
+        AclProviderInterface $aclProvider
+    )
+    {
         $this->router      = $router;
         $this->security    = $security;
+        $this->aclProvider = $aclProvider;
     }
 
     /**
      * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::setDefaultRouteParams()
+     *
+     * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::setDefaultrouteParameters()
      */
-    public function setDefaultRouteParams(array $defaultRouteParams)
+    public function setDefaultrouteParameters(array $defaultrouteParameters)
     {
-        $this->defaultRouteParams = $defaultRouteParams;
+        $this->defaultrouteParameters = $defaultrouteParameters;
 
         return $this;
     }
 
     /**
      * {@inheritdoc}
-     * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::setRouteParams()
+     *
+     * @see Millwright\MenuBundle\Menu.MenuFactoryInterface::setrouteParameters()
      */
-    public function setRouteParams(array $routeParams)
+    public function setrouteParameters(array $routeParameters)
     {
-        $this->routeParams = $routeParams;
+        $this->routeParameters = $routeParameters;
 
         return $this;
     }
@@ -97,39 +106,32 @@ class MenuFactory implements MenuFactoryInterface
     }
 
     /**
-     * Set uri, display, current uri to menu item
+     * Set uri, display context to menu item
      *
      * @param  MenuItemInterface $item
-     * @param  array $routeParameters
-     * @param  array $options
+     * @param  array             $routeParameters
+     * @param  array             $options
+     *
      * @return MenuFactoryInterface
      */
-    protected  function setContext(MenuItemInterface $item,
+    protected function setContext(MenuItemInterface $item,
         array $routeParameters = array(),
         array $options = array())
     {
-        $display = true;
+        $display  = true;
         $rootItem = !$item->getName();
-
-        $token = $this->security->getToken();
+        $token    = $this->security->getToken();
 
         if ($token) {
-            if($options['roles'] && !$this->security->isGranted($options['roles'])) {
+            if ($options['roles'] && !$this->security->isGranted($options['roles'])) {
                 $display = false;
             }
 
             if ($display) {
-                foreach($options['secureParams'] as $secureParam) {
-                    $paramName   = $secureParam['name'];
-                    if(isset($routeParameters[$paramName])) {
-                        $permissions = $secureParam['permissions'];
-                        $entityId    = $routeParameters[$paramName];
-                        $entityClass = $secureParam['class'];
-                        $object      = new ObjectIdentity($entityId, $entityClass);
-                        if(!$this->security->isGranted($permissions, $object)) {
-                            #$display = false;
-                            break;
-                        }
+                foreach ((array) $item->getExtra('oids') as $oidItem) {
+                    if (!$this->security->isGranted($oidItem['permissions'], $oidItem['oid'])) {
+                        $display = false;
+                        break;
                     }
                 }
             }
@@ -151,7 +153,7 @@ class MenuFactory implements MenuFactoryInterface
             }
         }
 
-        if(!$display) {
+        if (!$display) {
             if ($options['showNonAuthorized'] && !$token) {
                 $display = true;
             }
@@ -161,7 +163,7 @@ class MenuFactory implements MenuFactoryInterface
             }
         }
 
-        if(!$display) {
+        if (!$display) {
             $item->setDisplay(false);
         }
 
@@ -172,6 +174,7 @@ class MenuFactory implements MenuFactoryInterface
      * Create new empty instance of menu item
      *
      * @param  string $name
+     *
      * @return ItemInterface
      */
     protected function createItemInstance($name)
@@ -181,42 +184,72 @@ class MenuFactory implements MenuFactoryInterface
 
     /**
      * {@inheritdoc}
+     *
      * @see Knp\Menu.FactoryInterface::createItem()
+     *
+     * @param array & $itemList    array(MenuItemInterface $menuItem, array $routeParameters, array $options)
+     * @param array & $preloadOids preloaded oids for AclProviderInterface::findAcls()
      *
      * @return MenuItemInterface
      */
-    public function createItem($name, array $options = array())
+    public function createItem($name, array $options = array(), array & $itemList = array(),
+        array & $preloadOids = array())
     {
         $options += array(
-            'uri' => null,
-            'label' => null,
-            'attributes' => array(),
-            'linkAttributes' => array(),
-            'childrenAttributes' => array(),
-            'labelAttributes' => array(),
-            'display' => true,
-            'displayChildren' => true,
+            'uri'                     => null,
+            'label'                   => null,
+            'attributes'              => array(),
+            'linkAttributes'          => array(),
+            'childrenAttributes'      => array(),
+            'labelAttributes'         => array(),
+            'display'                 => true,
+            'displayChildren'         => true,
 
-            'type' => null,
-            'translateDomain' => null,
-            'translateParameters' => array(),
+            'type'                    => null,
+            'translateDomain'         => null,
+            'translateParameters'     => array(),
 
-            'roles' => array(),
-            'secureParams' => array(),
-            'route' => null,
-            'routeAbsolute' => false,
+            'roles'                   => array(),
+            'secureParams'            => array(),
+            'route'                   => null,
+            'routeAbsolute'           => false,
             'routeAcceptedParameters' => array(),
             'routeRequiredParameters' => array(),
-            'showNonAuthorized' => false,
-            'showAsText' => false,
+            'showNonAuthorized'       => false,
+            'showAsText'              => false,
         );
 
         $item = $this->createItemInstance($name);
 
+        $routeParameters = isset($this->routeParameters[$name])
+            ? $this->routeParameters[$name]
+            : $this->defaultrouteParameters;
+
+        if (!$routeParameters && isset($options['routeParameters'])) {
+            $routeParameters = $options['routeParameters'];
+        }
+
+        $itemOids = array();
+
+        if (!empty($options['secureParams'])) {
+            foreach ($options['secureParams'] as $secureParam) {
+                $paramName = $secureParam['name'];
+                if (isset($routeParameters[$paramName])) {
+                    $permissions   = $secureParam['permissions'];
+                    $entityId      = $routeParameters[$paramName];
+                    $entityClass   = $secureParam['class'];
+                    $oid           = new ObjectIdentity($entityId, $entityClass);
+                    $itemOids[]    = array('permissions' => $permissions, 'oid' => $oid);
+                    $preloadOids[] = $oid;
+                }
+            }
+        }
+
         $extra = array(
-            'type' => $options['type'],
-            'translateDomain' => $options['translateDomain'],
+            'type'                => $options['type'],
+            'translateDomain'     => $options['translateDomain'],
             'translateParameters' => $options['translateParameters'],
+            'oids'                => $itemOids,
         );
 
         $extra = array_merge($extra, $this->extra);
@@ -230,24 +263,16 @@ class MenuFactory implements MenuFactoryInterface
             ->setLabelAttributes($options['labelAttributes'])
             ->setDisplay($options['display'])
             ->setDisplayChildren($options['displayChildren'])
-            ->setExtras($extra)
-        ;
+            ->setExtras($extra);
 
-        $params = isset($this->routeParams[$name])
-            ? $this->routeParams[$name]
-            : $this->defaultRouteParams;
-
-        if(!$params && isset($options['routeParameters'])) {
-            $params = $options['routeParameters'];
-        }
-
-        $this->setContext($item, $params, $options);
+        $itemList[] = array($item, $routeParameters, $options);
 
         return $item;
     }
 
     /**
      * {@inheritdoc}
+     *
      * @see Knp\Menu.FactoryInterface::createFromNode()
      */
     public function createFromNode(NodeInterface $node)
@@ -263,13 +288,40 @@ class MenuFactory implements MenuFactoryInterface
 
     /**
      * {@inheritdoc}
+     *
      * @see Knp\Menu.FactoryInterface::createFromArray()
      */
     public function createFromArray(array $data, $name = null)
     {
-        $item = $this->createItem($name, $data);
+        $preloadOids = $itemList = array();
+        $menu        = $this->_createFromArray($data, $name, $itemList, $preloadOids);
+
+        if ($preloadOids) {
+            //preload all acls for menu items
+            $this->aclProvider->findAcls($preloadOids);
+        }
+
+        foreach ($itemList as $item) {
+            $this->setContext($item[0], $item[1], $item[2]);
+        }
+
+        return $menu;
+    }
+
+    /**
+     * @param array                                 $data
+     * @param string|null                           $name
+     * @param MenuItemInterface[]                   & $itemList plain list of menu items
+     * @param ObjectIdentityInterface[]             & $preloadOids
+     *
+     * @return \Knp\Menu\ItemInterface
+     */
+    private function _createFromArray(array $data, $name = null, array & $itemList, array & $preloadOids)
+    {
+        $item = $this->createItem($name, $data, $itemList, $preloadOids);
         foreach ($data['children'] as $name => $child) {
-            $item->addChild($this->createFromArray($child, $name));
+            $subItem = $this->_createFromArray($child, $name, $itemList, $preloadOids);
+            $item->addChild($subItem);
         }
 
         return $item;

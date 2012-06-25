@@ -49,6 +49,7 @@
         <service id="millwright_menu.factory" class="%millwright_menu.factory.class%">
             <argument type="service" id="router" />
             <argument type="service" id="security.context" />
+            <argument type="service" id="security.acl.provider" />
         </service>
 
         <service id="millwright_menu.merger" class="%millwright_menu.merger.class%">
