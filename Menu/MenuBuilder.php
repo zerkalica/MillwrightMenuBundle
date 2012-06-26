@@ -145,9 +145,9 @@ class MenuBuilder implements MenuBuilderInterface
         $this->addVoter();
 
         $factory
-            ->setDefaultRouteParams($defaultRouteParams)
-            ->setRouteParams($routeParams)
-            ->setDefaultExtraParams($extra)
+            ->setDefaultRouteParameters($defaultRouteParams)
+            ->setRouteParameters($routeParams)
+            ->setDefaultExtraParameters($extra)
         ;
 
         return $factory;

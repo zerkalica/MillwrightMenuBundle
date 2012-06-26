@@ -98,7 +98,7 @@ class MenuFactory implements MenuFactoryInterface
     /**
      * {@inheritDoc}
      */
-    public function setDefaultExtraParams(array $extra)
+    public function setDefaultExtraParameters(array $extra)
     {
         $this->extra = $extra;
 

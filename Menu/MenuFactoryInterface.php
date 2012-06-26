@@ -36,7 +36,7 @@ interface MenuFactoryInterface extends FactoryInterface
      *     </code>
      * @return MenuFactoryInterface
      */
-    public function setRouteParams(array $routeParams);
+    public function setRouteParameters(array $routeParams);
 
     /**
      * Set default route parameters
@@ -53,7 +53,7 @@ interface MenuFactoryInterface extends FactoryInterface
      *     </code>
      * @return MenuFactoryInterface
      */
-    public function setDefaultRouteParams(array $defaultRouteParams);
+    public function setDefaultRouteParameters(array $defaultRouteParams);
 
     /**
      * Set extra parameters, the will set to all items on menu creation
@@ -70,5 +70,5 @@ interface MenuFactoryInterface extends FactoryInterface
      *
      * @return MenuFactoryInterface
      */
-    public function setDefaultExtraParams(array $extra);
+    public function setDefaultExtraParameters(array $extra);
 }

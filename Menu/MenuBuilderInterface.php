@@ -25,8 +25,8 @@ interface MenuBuilderInterface
      * @param  array   $routeParams
      * @param  array   $extra
      *
-     * @see MenuFactoryInterface::setRouteParams()
-     * @see MenuFactoryInterface::setDefaultRouteParams()
+     * @see MenuFactoryInterface::setRouteParameters()
+     * @see MenuFactoryInterface::setDefaultRouteParameters()
      *
      * @return MenuItemInterface
      */
@@ -44,8 +44,8 @@ interface MenuBuilderInterface
      * @param  array   $routeParams
      * @param  array   $extra
      *
-     * @see MenuFactoryInterface::setRouteParams()
-     * @see MenuFactoryInterface::setDefaultRouteParams()
+     * @see MenuFactoryInterface::setRouteParameters()
+     * @see MenuFactoryInterface::setDefaultRouteParameters()
      *
      * @return MenuItemInterface
      */
