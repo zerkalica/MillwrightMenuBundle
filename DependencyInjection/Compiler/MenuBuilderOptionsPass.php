@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\Config\Definition\Processor;
 use Millwright\MenuBundle\DependencyInjection\MenuConfiguration;
+use Millwright\RadBundle\Util;
 
 class MenuBuilderOptionsPass implements CompilerPassInterface
 {
@@ -17,23 +18,13 @@ class MenuBuilderOptionsPass implements CompilerPassInterface
             return;
         }
 
-        $menuContainers = new \SplPriorityQueue();
-
-        foreach ($container->findTaggedServiceIds('millwright_menu.menu_options') as $id => $tags) {
-            $definition = $container->getDefinition($id);
-            $attributes = $definition->getTag('millwright_menu.menu_options');
-            $priority   = isset($attributes[0]['order']) ? $attributes[0]['order'] : 0;
-
-            $data = $definition->getArgument(0);
-            $menuContainers->insert($data, $priority);
-        }
-
-        $menuContainers = iterator_to_array($menuContainers);
-        ksort($menuContainers);
+        $menuContainers = Util::getDefinitionsByTag('millwright_menu.menu_options', $container);
 
         $config = array();
-        foreach ($menuContainers as $bundleConfig) {
-            $config = $this->merge($config, $bundleConfig);
+        /** @var $definition Definition */
+        foreach ($menuContainers as $definition) {
+            $bundleConfig = $definition->getArgument(0);
+            $config       = Util::merge($config, $bundleConfig);
         }
 
         //@todo place normalization here and remove from menu builder and ConfigCache
@@ -71,51 +62,5 @@ class MenuBuilderOptionsPass implements CompilerPassInterface
 
         $container->getDefinition('millwright_menu.builder')
             ->replaceArgument(5, $config);
-    }
-
-    /**
-     * Smart merge
-     *
-     * array_merge rewrite all elements in second level
-     * array_merge_recursive adds elements and makes arrays from strings
-     *
-     * @example
-     * <code>
-     *     $this->merge(array(
-     *         'level1' => array('param1' => '1', 'params2' => array('a' => 'b'))
-     *     ), array(
-     *         'level1' => array('param1' => '2', 'params2' => array('a' => 'c', 'd' => 'e'))
-     *     ));
-     *
-     *     //result:
-     *     array(
-     *         'level1' => array('param1' => '2', 'params2' => array('a' => 'c'), 'd' => 'e')
-     *     );
-     * </code>
-     *
-     * @param  array $to
-     * @param  array $from
-     * @return array
-     */
-    protected function merge($to, $from)
-    {
-        foreach ($from as $key => $value) {
-            if (!is_array($value)) {
-                if (is_int($key)) {
-                    $to[] = $value;
-                } else {
-                    $to[$key] = $value;
-                }
-            } else {
-
-                if (!isset($to[$key])) {
-                    $to[$key] = array();
-                }
-
-                $to[$key] = $this->merge($to[$key], $value);
-            }
-        }
-
-        return $to;
     }
 }
