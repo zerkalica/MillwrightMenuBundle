@@ -63,7 +63,7 @@ class MenuFactory implements MenuFactoryInterface
     public function __construct(
         RouterInterface $router,
         SecurityContextInterface $security,
-        AclProviderInterface $aclProvider
+        AclProviderInterface $aclProvider = null
     )
     {
         $this->router      = $router;
@@ -213,6 +213,7 @@ class MenuFactory implements MenuFactoryInterface
             'secureParams'            => array(),
             'route'                   => null,
             'routeAbsolute'           => false,
+            'routeParameters'         => array(),
             'routeAcceptedParameters' => array(),
             'routeRequiredParameters' => array(),
             'showNonAuthorized'       => false,
@@ -221,9 +222,9 @@ class MenuFactory implements MenuFactoryInterface
 
         $item = $this->createItemInstance($name);
 
-        $routeParameters = isset($this->routeParameters[$name])
-            ? $this->routeParameters[$name]
-            : $this->defaultrouteParameters;
+        $this->routeParameters += array($name => array());
+
+        $routeParameters = array_merge($options['routeParameters'], $this->defaultrouteParameters, $this->routeParameters[$name]);
 
         if (!$routeParameters && isset($options['routeParameters'])) {
             $routeParameters = $options['routeParameters'];
@@ -296,7 +297,7 @@ class MenuFactory implements MenuFactoryInterface
         $preloadOids = $itemList = array();
         $menu        = $this->_createFromArray($data, $name, $itemList, $preloadOids);
 
-        if ($preloadOids) {
+        if ($preloadOids && $this->aclProvider) {
             //preload all acls for menu items
             $this->aclProvider->findAcls($preloadOids);
         }
