@@ -138,7 +138,7 @@ class OptionMerger implements OptionMergerInterface
         }
 
         foreach($annotations as $param) {
-            if ($param instanceof ParamConverter) {
+            if ($param instanceof ParamConverter && isset($options['secureParams'][$param->getName()])) {
                 /** @var $param ParamConverter*/
                 $options['secureParams'][$param->getName()]['class'] = $param->getClass();
             }
