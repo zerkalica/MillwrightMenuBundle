@@ -14,9 +14,10 @@ use Symfony\Component\Routing\RouterInterface;
 use Doctrine\Common\Annotations\Reader;
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Annotation\Secure;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
 use Millwright\MenuBundle\Annotation\Menu;
 use Millwright\MenuBundle\Annotation\MenuDefault;
-
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
  * @category    Millwright
@@ -121,13 +122,25 @@ class OptionMerger implements OptionMergerInterface
         $options = array();
         foreach($annotations as $param) {
             if ($param instanceof SecureParam) {
+                /** @var $param SecureParam */
                 $options['secureParams'][$param->name] = $this->annotationToArray($param);
                 /* @var $argument \ReflectionParameter */
                 $argument  = $arguments[$param->name];
                 $class     = $argument->getClass();
+                if (!$class) {
+                    throw new \InvalidArgumentException(sprintf('Secured action parameter has no class definition'));
+                }
+
                 $options['secureParams'][$param->name]['class'] = $class->getName();
             } else if ($param instanceof Secure || $param instanceof Menu || $param instanceof MenuDefault) {
                 $options += $this->annotationToArray($param);
+            }
+        }
+
+        foreach($annotations as $param) {
+            if ($param instanceof ParamConverter) {
+                /** @var $param ParamConverter*/
+                $options['secureParams'][$param->getName()]['class'] = $param->getClass();
             }
         }
 

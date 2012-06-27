@@ -21,6 +21,8 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Acl\Model\ObjectIdentityInterface;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 
+use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
+
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
  * @category    Millwright
@@ -126,6 +128,7 @@ class MenuFactory implements MenuFactoryInterface
             if ($options['roles'] && !$this->security->isGranted($options['roles'])) {
                 $display = false;
             }
+
 
             if ($display) {
                 foreach ((array) $item->getExtra('oids') as $oidItem) {
@@ -233,6 +236,7 @@ class MenuFactory implements MenuFactoryInterface
         $itemOids = array();
 
         if (!empty($options['secureParams'])) {
+
             foreach ($options['secureParams'] as $secureParam) {
                 $paramName = $secureParam['name'];
                 if (isset($routeParameters[$paramName])) {
@@ -299,7 +303,10 @@ class MenuFactory implements MenuFactoryInterface
 
         if ($preloadOids && $this->aclProvider) {
             //preload all acls for menu items
-            $this->aclProvider->findAcls($preloadOids);
+            try {
+                $this->aclProvider->findAcls($preloadOids);
+            } catch(AclNotFoundException $e) {
+            }
         }
 
         foreach ($itemList as $item) {
