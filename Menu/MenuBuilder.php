@@ -179,6 +179,22 @@ class MenuBuilder implements MenuBuilderInterface
     )
     {
         $options = $this->getMenuOptions($name);
+
+        return $this->createMenuFromOptions($options, $defaultRouteParams, $extra);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Millwright\MenuBundle\Menu.MenuBuilderInterface::createMenuFromOptions()
+     */
+    public function createMenuFromOptions(
+        array $options,
+        array $defaultRouteParams = array(),
+        array $extra = array()
+    )
+    {
+        $routeParams = array();
+
         $factory = $this->createFactory($defaultRouteParams, $routeParams, $extra);
 
         return $factory->createFromArray($options);

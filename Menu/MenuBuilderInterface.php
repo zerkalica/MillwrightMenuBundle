@@ -37,6 +37,22 @@ interface MenuBuilderInterface
     );
 
     /**
+     * Create menu from options
+     *
+     * @param array $options menu container options
+     * @param array $defaultRouteParams  default route params for options
+     * @param array $extra
+     *
+     * @return MenuItemInterface
+     */
+    public function createMenuFromOptions(
+        array $options,
+        array $defaultRouteParams = array(),
+        array $extra = array()
+    );
+
+
+    /**
      * Create single item without children (for menu link)
      *
      * @param  string  $name name of menu item
