@@ -10,12 +10,9 @@ use Knp\Menu\Matcher\MatcherInterface;
  */
 class TwigRenderer implements RendererInterface
 {
-    /**
-     * @var \Twig_Environment
-     */
-    private $environment;
-    private $defaultOptions;
-    private $matcher;
+    protected $environment;
+    protected $defaultOptions;
+    protected $matcher;
 
     /**
      * @param \Twig_Environment $environment
@@ -23,12 +20,16 @@ class TwigRenderer implements RendererInterface
      * @param MatcherInterface  $matcher
      * @param array             $defaultOptions
      */
-    public function __construct(\Twig_Environment $environment, $template, MatcherInterface $matcher,
+    public function __construct(
+        \Twig_Environment $environment,
+        $template,
+        MatcherInterface $matcher,
         array $defaultOptions = array())
     {
         $this->environment    = $environment;
         $this->matcher        = $matcher;
         $this->defaultOptions = array_merge(array(
+            'block'             => 'root',
             'depth'             => null,
             'currentAsLink'     => true,
             'currentClass'      => 'current',
@@ -58,15 +59,13 @@ class TwigRenderer implements RendererInterface
             $template = $this->environment->loadTemplate($template);
         }
 
-        $block = isset($options['block']) ? $options['block'] : 'root';
-        //@todo remove breadcrumb into config
-        if ($block == 'breadcrumb') {
-            $data  = $this->getCurrentItem($item->getRoot())->getBreadcrumbsArray();
-        } else {
-            $data = $item;
-        }
+        $data = $this->getData($item);
 
-        $html = $template->renderBlock($block, array('item' => $data, 'options' => $options, 'matcher' => $this->matcher));
+        $html = $template->renderBlock($options['block'], array(
+            'item'    => $data,
+            'options' => $options,
+            'matcher' => $this->matcher
+        ));
 
         if (!empty($options['clear_matcher'])) {
             $this->matcher->clear();
@@ -76,25 +75,15 @@ class TwigRenderer implements RendererInterface
     }
 
     /**
-     * Get current item
+     * Get data for template by menu item
+     * used for breadcrumb
      *
      * @param ItemInterface $item
      *
-     * @return ItemInterface|null
+     * @return \Knp\Menu\ItemInterface
      */
-    protected function getCurrentItem(ItemInterface $item)
+    protected function getData(ItemInterface $item)
     {
-        foreach ($item->getChildren() as $child) {
-            if ($this->matcher->isCurrent($child)) {
-                return $child;
-            } else {
-                $child = $this->getCurrentItem($child);
-                if ($child) {
-                    return $child;
-                }
-            }
-        }
-
-        return null;
+        return $item;
     }
 }

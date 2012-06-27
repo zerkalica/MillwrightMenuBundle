@@ -11,8 +11,9 @@
 
         <parameter key="millwright_menu.helper.class">Millwright\MenuBundle\Twig\Helper</parameter>
         <parameter key="millwright_menu.twig.extension.class">Millwright\MenuBundle\Twig\MenuExtension</parameter>
-        <parameter key="millwright_menu.renderer.twig.template">MillwrightMenuBundle:Default:knp_menu.html.twig</parameter>
+        <parameter key="millwright_menu.renderer.twig.template">%knp_menu.renderer.twig.template%</parameter>
         <parameter key="millwright_menu.renderer.twig.class">Millwright\MenuBundle\Menu\Renderer\TwigRenderer</parameter>
+        <parameter key="millwright_menu.renderer.twig.breadcrumb.class">Millwright\MenuBundle\Menu\Renderer\BreadcrumbTwigRenderer</parameter>
         <parameter key="millwright_menu.templating.helper.class">Millwright\MenuBundle\Templating\Helper\MenuHelper</parameter>
 
         <parameter key="millwright_menu.options.class">Millwright\MenuBundle\Menu\MenuOptions</parameter>
@@ -46,6 +47,15 @@
             <argument type="service" id="knp_menu.matcher" />
             <argument>%knp_menu.renderer.twig.options%</argument>
         </service>
+
+        <service id="millwright_menu.renderer.breadcrumb.twig" class="%millwright_menu.renderer.twig.breadcrumb.class%">
+            <tag name="knp_menu.renderer" alias="millwright_breadcrumb_renderer" />
+            <argument type="service" id="twig" />
+            <argument>%millwright_menu.renderer.twig.template%</argument>
+            <argument type="service" id="knp_menu.matcher" />
+            <argument>%knp_menu.renderer.twig.options%</argument>
+        </service>
+
         <service id="millwright_menu.factory" class="%millwright_menu.factory.class%">
             <argument type="service" id="router" />
             <argument type="service" id="security.context" />

@@ -7,15 +7,13 @@
 {% block breadcrumb %}
 <ul class="breadcrumb">
     {% for element in item %}
-    <li>
-        {{ block('breadcrumb_element') }}
-    </li>
+        <li>{{ block('breadcrumb_element') }}</li>
     {% endfor %}
 </ul>
 {% endblock breadcrumb %}
 
 {% block breadcrumb_element %}
-    {% set item = element %}
+    {% set item = element.item %}
     {%- if item.uri is not empty and (not matcher.isCurrent(item)) %}
         {{ block('linkElement') }}
         <span class="divider">/</span>

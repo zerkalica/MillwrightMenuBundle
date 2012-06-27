@@ -229,10 +229,6 @@ class MenuFactory implements MenuFactoryInterface
 
         $routeParameters = array_merge($options['routeParameters'], $this->defaultrouteParameters, $this->routeParameters[$name]);
 
-        if (!$routeParameters && isset($options['routeParameters'])) {
-            $routeParameters = $options['routeParameters'];
-        }
-
         $itemOids = array();
 
         if (!empty($options['secureParams'])) {
@@ -249,8 +245,6 @@ class MenuFactory implements MenuFactoryInterface
                 }
             }
         }
-
-
 
         $extra = array(
             'type'                => $options['type'],
