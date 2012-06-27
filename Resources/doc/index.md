@@ -47,6 +47,9 @@ install`:
     git=https://github.com/KnpLabs/KnpMenuBundle.git
     target=bundles/Knp/Bundle/MenuBundle
 
+[MillwrightRadBundle]
+    git=git://github.com/zerkalica/MillwrightRadBundle.git
+
 [MillwrightMenuBundle]
     git=git://github.com/zerkalica/MillwrightMenuBundle.git
 ```
@@ -82,6 +85,7 @@ public function registerBundles()
         // ...
         new Knp\Bundle\MenuBundle\KnpMenuBundle(),
         new Millwright\MenuBundle\MillwrightMenuBundle(),
+        new Millwright\RadBundle\MillwrightRadBundle(),
     );
     // ...
 )
