@@ -57,6 +57,7 @@ class MenuConfiguration implements ConfigurationInterface
                             ->scalarNode('compressed')->end()
                             ->scalarNode('block')->end()
                             ->scalarNode('rootClass')->end()
+                            ->scalarNode('isDropdown')->defaultValue(true)->end()
                         ->end()
                     ->end()
                 ->end()
