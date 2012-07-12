@@ -33,6 +33,9 @@ class BreadcrumbTwigRenderer extends TwigRenderer
     protected function getData(ItemInterface $item)
     {
         $currentItem = $this->getCurrentItem($item->getRoot());
+        if (!$currentItem) {
+            throw new \ErrorException(strtr('Current item not found for %root_item_name%', array('%root_item_name%' => $item->getRoot()->getName())));
+        }
         $data  = $currentItem->getBreadcrumbsArray();
         if(isset($data[0]) && empty($data[0]['uri'])) {
             array_shift($data);
