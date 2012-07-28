@@ -19,8 +19,8 @@ class BreadcrumbTwigRenderer extends TwigRenderer
         \Twig_Environment $environment,
         $template,
         MatcherInterface $matcher,
-        array $defaultOptions = array())
-    {
+        array $defaultOptions = array()
+    ) {
         $defaultOptions = array_merge(array(
             'block' => 'breadcrumb'
         ), $defaultOptions);

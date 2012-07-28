@@ -24,8 +24,8 @@ class TwigRenderer implements RendererInterface
         \Twig_Environment $environment,
         $template,
         MatcherInterface $matcher,
-        array $defaultOptions = array())
-    {
+        array $defaultOptions = array()
+    ) {
         $this->environment    = $environment;
         $this->matcher        = $matcher;
         $this->defaultOptions = array_merge(array(
