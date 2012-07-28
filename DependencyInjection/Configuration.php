@@ -13,18 +13,4 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration extends MenuConfiguration
 {
-    protected function setChildren($node)
-    {
-        $node
-            ->scalarNode('generator_cache_class')
-                ->defaultValue('%kernel.name%%kernel.environment%MenuTree')
-            ->end()
-            ->scalarNode('cache_dir')->defaultValue('%kernel.cache_dir%')->end()
-            ->scalarNode('debug')->defaultValue('%kernel.debug%')->end()
-        ;
-
-        parent::setChildren($node);
-
-        return $this;
-    }
 }

@@ -4,89 +4,41 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="millwright_menu.menu_builder.class">Millwright\MenuBundle\Menu\MenuBuilder</parameter>
         <parameter key="millwright_menu.factory.class">Millwright\MenuBundle\Menu\MenuFactory</parameter>
+        <parameter key="millwright_menu.menu_builder.class">Millwright\MenuBundle\Menu\MenuBuilder</parameter>
         <parameter key="millwright_menu.main.class">Millwright\MenuBundle\Menu\MenuItem</parameter>
-        <parameter key="millwright_menu.merger.class">Millwright\MenuBundle\Config\OptionMerger</parameter>
+        <parameter key="millwright_menu.option.builder.class">Millwright\MenuBundle\Config\OptionBuilder</parameter>
 
-        <parameter key="millwright_menu.helper.class">Millwright\MenuBundle\Twig\Helper</parameter>
-        <parameter key="millwright_menu.twig.extension.class">Millwright\MenuBundle\Twig\MenuExtension</parameter>
-        <parameter key="millwright_menu.renderer.twig.template">%knp_menu.renderer.twig.template%</parameter>
-        <parameter key="millwright_menu.renderer.twig.class">Millwright\MenuBundle\Menu\Renderer\TwigRenderer</parameter>
-        <parameter key="millwright_menu.renderer.twig.breadcrumb.class">Millwright\MenuBundle\Menu\Renderer\BreadcrumbTwigRenderer</parameter>
-        <parameter key="millwright_menu.templating.helper.class">Millwright\MenuBundle\Templating\Helper\MenuHelper</parameter>
-
-        <parameter key="millwright_menu.options.class">Millwright\MenuBundle\Menu\MenuOptions</parameter>
-
-        <parameter key="millwright_menu.cache_warmer.class">Millwright\MenuBundle\CacheWarmer\MenuCacheWarmer</parameter>
-
+        <parameter key="millwright_menu.option.builder.type">millwright_menu</parameter>
     </parameters>
 
     <services>
-
-        <service id="millwright_menu.twig.extension" class="%millwright_menu.twig.extension.class%" public="false">
-            <tag name="twig.extension" />
-            <argument type="service" id="millwright_menu.helper" />
-        </service>
-
-        <service id="millwright_menu.helper" class="%millwright_menu.helper.class%" public="false">
-            <argument type="service" id="knp_menu.renderer_provider" />
-            <argument type="service" id="millwright_menu.builder" />
-            <argument type="collection" />
-        </service>
-
-        <service id="millwright_menu.templating.helper" class="%millwright_menu.templating.helper.class%">
-            <tag name="templating.helper" alias="millwright_menu" />
-            <argument type="service" id="millwright_menu.helper" />
-        </service>
-
-        <service id="millwright_menu.renderer.twig" class="%millwright_menu.renderer.twig.class%">
-            <tag name="knp_menu.renderer" alias="millwright_renderer" />
-            <argument type="service" id="twig" />
-            <argument>%millwright_menu.renderer.twig.template%</argument>
-            <argument type="service" id="knp_menu.matcher" />
-            <argument>%knp_menu.renderer.twig.options%</argument>
-        </service>
-
-        <service id="millwright_menu.renderer.breadcrumb.twig" class="%millwright_menu.renderer.twig.breadcrumb.class%">
-            <tag name="knp_menu.renderer" alias="millwright_breadcrumb_renderer" />
-            <argument type="service" id="twig" />
-            <argument>%millwright_menu.renderer.twig.template%</argument>
-            <argument type="service" id="knp_menu.matcher" />
-            <argument>%knp_menu.renderer.twig.options%</argument>
-        </service>
-
         <service id="millwright_menu.factory" class="%millwright_menu.factory.class%">
             <argument type="service" id="router" />
             <argument type="service" id="security.context" />
             <argument type="service" id="security.acl.provider" on-invalid="null" />
         </service>
 
-        <service id="millwright_menu.merger" class="%millwright_menu.merger.class%">
+        <service id="millwright_menu.builder" class="%millwright_menu.menu_builder.class%">
+            <argument type="service" id="millwright_menu.factory" />
+            <argument type="service" id="knp_menu.matcher" />
+            <argument type="service" id="service_container" />
+            <argument type="service" id="millwright_configuration.manager" />
+            <argument>%millwright_menu.option.builder.type%</argument>
+        </service>
+
+        <service id="millwright_menu.option.dumper" class="%millwright_configuration.array_dumper.class%">
+            <tag name="millwright_configuration.dumper" type="%millwright_menu.option.builder.type%" />
+        </service>
+
+        <service id="millwright_menu.option.builder" class="%millwright_menu.option.builder.class%">
+            <tag name="millwright_configuration.builder" type="%millwright_menu.option.builder.type%" />
             <argument type="service" id="router" />
             <argument type="service" id="annotation_reader" />
         </service>
 
-        <service id="millwright_menu.builder" class="%millwright_menu.menu_builder.class%">
-            <argument type="service" id="millwright_menu.factory" />
-            <argument type="service" id="millwright_menu.merger" />
-            <argument type="service" id="knp_menu.matcher" />
-            <argument type="service" id="service_container" />
-            <argument type="collection">
-                <argument key="generator_cache_class">%millwright_menu.generator_cache_class%</argument>
-                <argument key="cache_dir">%millwright_menu.cache_dir%</argument>
-                <argument key="debug">%millwright_menu.debug%</argument>
-            </argument>
-            <argument type="collection" />
-        </service>
-
-        <service id="millwright_menu.cache_warmer" class="%millwright_menu.cache_warmer.class%" public="false">
-            <tag name="kernel.cache_warmer" />
-            <argument type="service" id="millwright_menu.builder" />
-        </service>
-
-        <service id="millwright_menu.options" class="%millwright_menu.options.class%">
-            <tag name="millwright_menu.menu_options" order="100"/>
+        <service id="millwright_menu.options" class="%millwright_configuration.options.class%">
+            <tag name="millwright_menu.menu_options" order="100" />
             <argument type="collection">
                 <argument key="items">%millwright_menu.items%</argument>
                 <argument key="tree">%millwright_menu.tree%</argument>
@@ -94,6 +46,4 @@
             </argument>
         </service>
     </services>
-
 </container>
-

@@ -1,11 +1,7 @@
 <?php
-
 namespace Millwright\MenuBundle\DependencyInjection;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
+
+use Millwright\ConfigurationBundle\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -14,22 +10,17 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class MillwrightMenuExtension extends Extension
 {
+    protected $configRoot = __DIR__;
+    protected $isYml      = false;
+
     /**
      * {@inheritDoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    protected function getConfigParts()
     {
-        $configuration = new Configuration();
-        $processor = new Processor();
-        $config = $processor->processConfiguration($configuration, $configs);
-
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__
-            . '/../Resources/config'));
-        $loader->load('services.xml');
-
-        foreach ($config as $key => $value) {
-            $key = $this->getAlias() . '.' . $key;
-            $container->setParameter($key, $value);
-        }
+        return array(
+            'services.xml',
+            'twig.xml',
+        );
     }
 }

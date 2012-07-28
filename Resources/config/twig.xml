@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="millwright_menu.helper.class">Millwright\MenuBundle\Twig\Helper</parameter>
+        <parameter key="millwright_menu.twig.extension.class">Millwright\MenuBundle\Twig\MenuExtension</parameter>
+        <parameter key="millwright_menu.renderer.twig.template">%knp_menu.renderer.twig.template%</parameter>
+        <parameter key="millwright_menu.renderer.twig.class">Millwright\MenuBundle\Menu\Renderer\TwigRenderer</parameter>
+        <parameter key="millwright_menu.renderer.twig.breadcrumb.class">Millwright\MenuBundle\Menu\Renderer\BreadcrumbTwigRenderer</parameter>
+
+        <parameter key="millwright_menu.templating.helper.class">Millwright\MenuBundle\Templating\Helper\MenuHelper</parameter>
+    </parameters>
+
+    <services>
+        <service id="millwright_menu.templating.helper" class="%millwright_menu.templating.helper.class%">
+            <tag name="templating.helper" alias="millwright_menu" />
+            <argument type="service" id="millwright_menu.helper" />
+        </service>
+
+        <service id="millwright_menu.twig.extension" class="%millwright_menu.twig.extension.class%" public="false">
+            <tag name="twig.extension" />
+            <argument type="service" id="millwright_menu.helper" />
+        </service>
+
+        <service id="millwright_menu.helper" class="%millwright_menu.helper.class%" public="false">
+            <argument type="service" id="knp_menu.renderer_provider" />
+            <argument type="service" id="millwright_menu.builder" />
+            <argument type="collection" />
+        </service>
+
+        <service id="millwright_menu.renderer.twig" class="%millwright_menu.renderer.twig.class%">
+            <tag name="knp_menu.renderer" alias="millwright_renderer" />
+            <argument type="service" id="twig" />
+            <argument>%millwright_menu.renderer.twig.template%</argument>
+            <argument type="service" id="knp_menu.matcher" />
+            <argument>%knp_menu.renderer.twig.options%</argument>
+        </service>
+
+        <service id="millwright_menu.renderer.breadcrumb.twig" class="%millwright_menu.renderer.twig.breadcrumb.class%">
+            <tag name="knp_menu.renderer" alias="millwright_breadcrumb_renderer" />
+            <argument type="service" id="twig" />
+            <argument>%millwright_menu.renderer.twig.template%</argument>
+            <argument type="service" id="knp_menu.matcher" />
+            <argument>%knp_menu.renderer.twig.options%</argument>
+        </service>
+    </services>
+</container>

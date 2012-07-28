@@ -7,8 +7,10 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\Config\Definition\Processor;
+
+use Millwright\ConfigurationBundle\ContainerUtil as Util;
+
 use Millwright\MenuBundle\DependencyInjection\MenuConfiguration;
-use Millwright\RadBundle\Util;
 
 class MenuBuilderOptionsPass implements CompilerPassInterface
 {
@@ -18,14 +20,7 @@ class MenuBuilderOptionsPass implements CompilerPassInterface
             return;
         }
 
-        $menuContainers = Util::getDefinitionsByTag('millwright_menu.menu_options', $container);
-
-        $config = array();
-        /** @var $definition Definition */
-        foreach ($menuContainers as $definition) {
-            $bundleConfig = $definition->getArgument(0);
-            $config       = Util::merge($config, $bundleConfig);
-        }
+        $config = Util::collectConfiguration('millwright_menu.menu_options', $container);
 
         //@todo place normalization here and remove from menu builder and ConfigCache
         // why getRouteCollection falls here ?
@@ -60,7 +55,6 @@ class MenuBuilderOptionsPass implements CompilerPassInterface
             unset($config['renderers']);
         }
 
-        $container->getDefinition('millwright_menu.builder')
-            ->replaceArgument(5, $config);
+        $container->getDefinition('millwright_menu.option.builder')->addMethodCall('setDefaults', array($config));
     }
 }

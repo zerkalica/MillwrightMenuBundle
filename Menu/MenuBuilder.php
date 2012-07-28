@@ -10,11 +10,12 @@
 namespace Millwright\MenuBundle\Menu;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Config\ConfigCache;
-use Millwright\MenuBundle\Config\OptionMergerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Knp\Menu\Matcher\MatcherInterface;
 use Knp\Menu\Matcher\Voter\UriVoter;
+
+use Millwright\ConfigurationBundle\Config\OptionManagerInterface;
 
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
@@ -24,79 +25,35 @@ use Knp\Menu\Matcher\Voter\UriVoter;
  */
 class MenuBuilder implements MenuBuilderInterface
 {
-    /**
-     * @var MenuFactoryInterface
-     */
     protected $factory;
-
-    /**
-     * @var OptionMergerInterface
-     */
-    protected $merger;
-
-    /**
-     * @var array
-     */
-    protected $options;
-
-    /**
-     * @var array
-     */
-    protected $menuOptions;
-
-    /**
-     * @var array
-     */
-    protected $compiledOptions;
-
-    /**
-     *
-     * @var ContainerInterface
-     */
-    protected  $container;
-
+    protected $container;
     protected $currentUri;
     protected $matcher;
+    protected $optionManager;
+    protected $optionNamespace;
 
     public function __construct(
-        MenuFactoryInterface  $factory,
-        OptionMergerInterface $merger,
-        MatcherInterface      $matcher,
-        ContainerInterface    $container,
-        array                 $options,
-        array                 $menuOptions
+        MenuFactoryInterface   $factory,
+        MatcherInterface       $matcher,
+        ContainerInterface     $container,
+        OptionManagerInterface $optionManager,
+        $optionNamespace
     ) {
-        $this->factory     = $factory;
-        $this->merger      = $merger;
-        $this->options     = $options;
-        $this->menuOptions = $menuOptions;
-        $this->container   = $container;
-        $this->matcher     = $matcher;
+        $this->factory         = $factory;
+        $this->container       = $container;
+        $this->matcher         = $matcher;
+        $this->optionManager   = $optionManager;
+        $this->optionNamespace = $optionNamespace;
     }
 
-    public function loadCache($cacheDir = null)
+    /**
+     * Get options from option manager
+     *
+     * @return array
+     */
+    protected function getOptions()
     {
-        if(null === $this->compiledOptions) {
-
-            if(!$cacheDir) {
-                $cacheDir = $this->options['cache_dir'];
-            }
-
-            $class = $this->options['generator_cache_class'];
-            $cache = $cacheDir
-                ? new ConfigCache($cacheDir . '/'
-                    . $class . '.php',
-                    $this->options['debug'])
-                : null
-            ;
-
-            if(!$cache || !$cache->isFresh()) {
-                $this->compiledOptions = $this->merger->normalize($this->menuOptions);
-                $cache->write('<?php return ' . var_export($this->compiledOptions, true) . ';');
-            } else {
-                $this->compiledOptions = require_once $cache;
-            }
-        }
+        return $this->optionManager->getOptions($this->optionNamespace);
     }
 
     /**
@@ -107,9 +64,9 @@ class MenuBuilder implements MenuBuilderInterface
      */
     protected function getMenuOptions($name)
     {
-        $this->loadCache();
+        $options = $this->getOptions();
 
-        return $this->compiledOptions['tree'][$name];
+        return $options['tree'][$name];
     }
 
     /**
@@ -120,9 +77,9 @@ class MenuBuilder implements MenuBuilderInterface
      */
     protected function getLinkOptions($name)
     {
-        $this->loadCache();
+        $options = $this->getOptions();
 
-        return $this->compiledOptions['items'][$name];
+        return $options['items'][$name];
     }
 
     /**
@@ -176,8 +133,7 @@ class MenuBuilder implements MenuBuilderInterface
         array $defaultRouteParams = array(),
         array $routeParams = array(),
         array $extra = array()
-    )
-    {
+    ) {
         $options = $this->getMenuOptions($name);
 
         return $this->createMenuFromOptions($options, $defaultRouteParams, $extra);
@@ -191,8 +147,7 @@ class MenuBuilder implements MenuBuilderInterface
         array $options,
         array $defaultRouteParams = array(),
         array $extra = array()
-    )
-    {
+    ) {
         $routeParams = array();
 
         $factory = $this->createFactory($defaultRouteParams, $routeParams, $extra);

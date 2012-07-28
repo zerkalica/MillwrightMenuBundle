@@ -114,7 +114,7 @@ knp_menu:
 Any bundle can provide own menu or modify existing through `millwright_menu.menu_options` tagged service:
 
 ```xml
-        <service id="millwright_menu.options" class="%millwright_menu.options.class%">
+        <service id="millwright_menu.options" class="%millwright_configuration.options.class%">
             <tag name="millwright_menu.menu_options" order="100"/>
             <argument type="collection">
                 <argument key="items">%millwright_menu.items%</argument>
