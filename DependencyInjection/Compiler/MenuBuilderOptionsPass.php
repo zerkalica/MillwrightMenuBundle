@@ -5,33 +5,22 @@ use Symfony\Component\DependencyInjection\Reference;
 
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\Config\Definition\Processor;
 
-use Millwright\ConfigurationBundle\ContainerUtil as Util;
+use Millwright\ConfigurationBundle\DependencyInjection\Compiler\OptionCompilerPassBase;
 
 use Millwright\MenuBundle\DependencyInjection\MenuConfiguration;
 
-class MenuBuilderOptionsPass implements CompilerPassInterface
+class MenuBuilderOptionsPass extends OptionCompilerPassBase
 {
-    public function process(ContainerBuilder $container)
+    protected $optionBuilderId = 'millwright_menu.option.builder';
+    protected $optionsTag      = 'millwright_menu.menu_options';
+
+    protected function preProcess(array & $config, Processor $processor, ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('millwright_menu.builder')) {
-            return;
-        }
-
-        $config = Util::collectConfiguration('millwright_menu.menu_options', $container);
-
-        //@todo place normalization here and remove from menu builder and ConfigCache
-        // why getRouteCollection falls here ?
-        //$config = $container->get('millwright_menu.merger')->normalize($config);
-
-        $processor     = new Processor();
-        $configuration = new MenuConfiguration();
-
         //reuse configuration for validating service-provided menu configs
         $config = array('millwright_menu' => $config);
-        $config = $processor->processConfiguration($configuration, $config);
+        $config = $processor->processConfiguration(new MenuConfiguration, $config);
 
         if(isset($config['renderers'])) {
             $renderers = $config['renderers'];
@@ -54,7 +43,5 @@ class MenuBuilderOptionsPass implements CompilerPassInterface
 
             unset($config['renderers']);
         }
-
-        $container->getDefinition('millwright_menu.option.builder')->addMethodCall('setDefaults', array($config));
     }
 }
