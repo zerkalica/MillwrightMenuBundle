@@ -13,9 +13,9 @@ use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
-use Millwright\ConfigurationBundle\Config\OptionBuilderBase;
-use Millwright\ConfigurationBundle\Config\OptionBuilderHelperInterface;
-use Millwright\ConfigurationBundle\Model\RouteInfo;
+use Millwright\ConfigurationBundle\Builder\OptionBuilderBase;
+use Millwright\ConfigurationBundle\Configuration\ConfigurationHelperInterface;
+use Millwright\ConfigurationBundle\Configuration\RouteInfo;
 
 use Millwright\MenuBundle\Annotation\Menu;
 use Millwright\MenuBundle\Annotation\MenuDefault;
@@ -30,7 +30,7 @@ class OptionBuilder extends OptionBuilderBase
 {
     protected $helper;
 
-    public function __construct(OptionBuilderHelperInterface $helper) {
+    public function __construct(ConfigurationHelperInterface $helper) {
         $this->helper = $helper;
     }
 

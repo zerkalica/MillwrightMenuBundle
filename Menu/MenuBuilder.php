@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Knp\Menu\Matcher\MatcherInterface;
 use Knp\Menu\Matcher\Voter\UriVoter;
 
-use Millwright\ConfigurationBundle\Config\OptionManagerInterface;
+use Millwright\ConfigurationBundle\Builder\OptionManagerInterface;
 
 /**
  * @author      Stefan Zerkalica <zerkalica@gmail.com>
