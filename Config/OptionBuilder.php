@@ -9,13 +9,13 @@
  */
 namespace Millwright\MenuBundle\Config;
 
-use Symfony\Component\Routing\RouterInterface;
-use Doctrine\Common\Annotations\Reader;
 use JMS\SecurityExtraBundle\Annotation\SecureParam;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Millwright\ConfigurationBundle\Config\OptionBuilderBase;
+use Millwright\ConfigurationBundle\Config\OptionBuilderHelperInterface;
+use Millwright\ConfigurationBundle\Model\RouteInfo;
 
 use Millwright\MenuBundle\Annotation\Menu;
 use Millwright\MenuBundle\Annotation\MenuDefault;
@@ -28,22 +28,10 @@ use Millwright\MenuBundle\Annotation\MenuDefault;
  */
 class OptionBuilder extends OptionBuilderBase
 {
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
+    protected $helper;
 
-    /**
-     * @var Reader
-     */
-    protected $reader;
-
-    public function __construct(
-        RouterInterface $router,
-        Reader $reader
-    ) {
-        $this->router         = $router;
-        $this->reader         = $reader;
+    public function __construct(OptionBuilderHelperInterface $helper) {
+        $this->helper = $helper;
     }
 
     protected function getDefaultParams()
@@ -73,44 +61,6 @@ class OptionBuilder extends OptionBuilderBase
     }
 
     /**
-     * Get action method by route name
-     *
-     * @param  string $name route name
-     *
-     * @return array array(\ReflectionMethod, array())
-     */
-    protected function getRouteInfo($name)
-    {
-        //@todo do not use getRouteCollection - not interface method
-        // howto get controller and action name by route name ?
-        $route = $this->router->getRouteCollection()->get($name);
-        if (!$route) {
-            return null;
-        }
-
-        $defaults = $route->getDefaults();
-        if (!isset($defaults['_controller'])) {
-            return null;
-        }
-
-        $params = explode('::', $defaults['_controller']);
-
-        $class  = new \ReflectionClass($params[0]);
-        $method = $class->getMethod($params[1]);
-
-        unset($defaults['_controller']);
-
-        $compiledRoute = $route->compile();
-        $tokens        = $compiledRoute->getVariables();
-
-        return array(
-            'method'                  => $method,
-            'routeAcceptedParameters' => array_flip(array_merge(array_keys($defaults), $tokens)),
-            'routeRequiredParameters' => array_merge(array_keys($route->getRequirements()), $tokens)
-        );
-    }
-
-    /**
      * Merge array of annotations to options
      *
      * @param  array $options
@@ -122,32 +72,37 @@ class OptionBuilder extends OptionBuilderBase
     protected function getAnnotations(
         array $annotations,
         array $arguments = array()
-    )
-    {
+    ) {
         $options = array();
-        foreach ($annotations as $param) {
-            if ($param instanceof SecureParam) {
-                /** @var $param SecureParam */
-                $options['secureParams'][$param->name] = $this->annotationToArray($param);
-                /* @var $argument \ReflectionParameter */
-                $argument = $arguments[$param->name];
-                $class    = $argument->getClass();
-                if (!$class) {
-                    throw new \InvalidArgumentException(sprintf('Secured action parameter has no class definition'));
-                }
+        foreach ($annotations as $params) {
+            foreach ($params as $param) {
+                if ($param instanceof SecureParam) {
+                    /** @var $param SecureParam */
+                    $options['secureParams'][$param->name] = $this->annotationToArray($param);
+                    /* @var $argument \ReflectionParameter */
+                    $argument = $arguments[$param->name];
+                    $class    = $argument->getClass();
+                    if (!$class) {
+                        throw new \InvalidArgumentException(sprintf(
+                            'Secured action parameter has no class definition'
+                        ));
+                    }
 
-                $options['secureParams'][$param->name]['class'] = $class->getName();
-            } else {
-                if ($param instanceof Secure || $param instanceof Menu || $param instanceof MenuDefault) {
-                    $options += $this->annotationToArray($param);
+                    $options['secureParams'][$param->name]['class'] = $class->getName();
+                } else {
+                    if ($param instanceof Secure || $param instanceof Menu || $param instanceof MenuDefault) {
+                        $options += $this->annotationToArray($param);
+                    }
                 }
             }
         }
 
-        foreach ($annotations as $param) {
-            if ($param instanceof ParamConverter && isset($options['secureParams'][$param->getName()])) {
-                /** @var $param ParamConverter*/
-                $options['secureParams'][$param->getName()]['class'] = $param->getClass();
+        foreach ($annotations as $params) {
+            foreach ($params as $param) {
+                if ($param instanceof ParamConverter && isset($options['secureParams'][$param->getName()])) {
+                    /** @var $param ParamConverter*/
+                    $options['secureParams'][$param->getName()]['class'] = $param->getClass();
+                }
             }
         }
 
@@ -202,34 +157,21 @@ class OptionBuilder extends OptionBuilderBase
 
         if ($name) {
             $annotationsOptions = array();
-            $classAnnotations   = array();
-            $arguments          = array();
-
             if (empty($options['uri'])) {
                 $route     = isset($options['route']) ? $options['route'] : $name;
-                $routeInfo = $this->getRouteInfo($route);
-
+                $routeInfo = $this->helper->getRouteInfo($route);
                 if ($routeInfo) {
-                    $method = $routeInfo['method'];
-                    unset($routeInfo['method']);
+                    $methodInfo = $routeInfo->getMethodInfo();
 
-                    $options += array('route' => $route);
-                    $options += $routeInfo;
+                    $annotationsOptions = $this->getAnnotations($methodInfo->getConfigurations(), $methodInfo->getArguments());
 
-                    foreach ($method->getParameters() as $argument) {
-                        $arguments[$argument->getName()] = $argument;
-                    }
-
-                    $annotations        = $this->reader->getMethodAnnotations($method);
-                    $annotationsOptions = $this->getAnnotations($annotations, $arguments);
-
-                    $class            = $method->getDeclaringClass();
-                    $classAnnotations = $this->reader->getClassAnnotations($class);
+                    $annotationsOptions += array(
+                        'route'                   => $route,
+                        'routeAcceptedParameters' => array_flip($routeInfo->getAcceptedParameters()),
+                        'routeRequiredParameters' => $routeInfo->getRequiredParameters()
+                    );
                 }
             }
-            $annotationsOptions = array_merge(
-                $annotationsOptions, $this->getAnnotations($classAnnotations, $arguments)
-            );
 
             $options += $annotationsOptions;
             $options += $this->getDefaultParams();

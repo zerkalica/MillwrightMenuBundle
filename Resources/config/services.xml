@@ -33,8 +33,7 @@
 
         <service id="millwright_menu.option.builder" class="%millwright_menu.option.builder.class%">
             <tag name="millwright_configuration.builder" type="%millwright_menu.option.builder.type%" />
-            <argument type="service" id="router" />
-            <argument type="service" id="annotation_reader" />
+            <argument type="service" id="millwright_configuration.builder_helper" />
         </service>
 
         <service id="millwright_menu.options" class="%millwright_configuration.options.class%">
