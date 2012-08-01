@@ -10,7 +10,7 @@ use Millwright\ConfigurationBundle\Extension;
  */
 class MillwrightMenuExtension extends Extension
 {
-    protected $configRoot = __DIR__;
+    protected $bundleRoot = __DIR__;
     protected $isYml      = false;
 
     /**

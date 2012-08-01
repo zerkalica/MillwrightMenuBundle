@@ -35,7 +35,7 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                             return preg_split('/\s*,\s*/', $v);
                         })->end()
                     ->prototype('scalar')->end()
-                    ->end()
+                ->end()
                 ->scalarNode('label')->end()
                 ->scalarNode('translateDomain')->end()
                 ->arrayNode('translateParameters')
@@ -47,11 +47,11 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                             ->scalarNode('name')->end()
                             ->scalarNode('class')->end()
                             ->arrayNode('permissions')
-                            ->beforeNormalization()->ifString()->then(
-                                function($v) {
-                                    return preg_split('/\s*,\s*/', $v);
-                                })->end()
-                            ->prototype('scalar')->end()
+                                ->beforeNormalization()->ifString()->then(
+                                    function($v) {
+                                        return preg_split('/\s*,\s*/', $v);
+                                    })->end()
+                                ->prototype('scalar')->end()
                             ->end()
                         ->end()
                     ->end()
