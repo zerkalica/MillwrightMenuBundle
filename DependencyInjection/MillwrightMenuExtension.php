@@ -1,7 +1,7 @@
 <?php
 namespace Millwright\MenuBundle\DependencyInjection;
 
-use Millwright\ConfigurationBundle\Extension;
+use Millwright\Util\DependencyInjection\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration

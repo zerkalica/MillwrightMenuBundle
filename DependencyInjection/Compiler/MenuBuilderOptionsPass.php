@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\Config\Definition\Processor;
 
-use Millwright\ConfigurationBundle\ContainerUtil;
+use Millwright\Util\DependencyInjection\ContainerUtil;
 
 use Millwright\MenuBundle\DependencyInjection\MenuConfiguration;
 
