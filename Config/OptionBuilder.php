@@ -168,7 +168,7 @@ class OptionBuilder extends OptionBuilderBase
                     $annotationsOptions += array(
                         'route'                   => $route,
                         'routeAcceptedParameters' => array_flip($routeInfo->getAcceptedParameters()),
-                        'routeRequiredParameters' => $routeInfo->getRequiredParameters()
+                        'routeRequiredParameters' => array_flip($routeInfo->getRequiredParameters())
                     );
                 }
             }
