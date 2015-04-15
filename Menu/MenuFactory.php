@@ -143,8 +143,7 @@ class MenuFactory implements MenuFactoryInterface
         if ($options['route'] && !$rootItem) {
             $acceptedRouteParameters = array_intersect_key($routeParameters, $options['routeAcceptedParameters']);
 
-            //@todo refactor this compare logic, do routeAcceptedParameters and routeRequiredParameters to same format
-            if ($options['routeRequiredParameters'] === array_keys($acceptedRouteParameters)) {
+            if ($options['routeRequiredParameters'] === $options['routeAcceptedParameters']) {
                 $uri = $this->router->generate(
                     $options['route'],
                     $acceptedRouteParameters,
