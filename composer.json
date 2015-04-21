@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-        "knplabs/knp-menu-bundle": "1.*",
+        "knplabs/knp-menu-bundle": "2.*",
         "zerkalica/millwright-configuration-bundle": "1.*"
     },
     "autoload": {
