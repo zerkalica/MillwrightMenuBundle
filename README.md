@@ -19,17 +19,17 @@ Each link on the site is a part of configured menu container, which supports tra
 1. It uses `JMSSecurityExtraBundle` annotations for configuring menu items visibility:
    role-based and acl-based security context support
 
-2. Menu options consist of two parts: 
+2. Menu options consist of two parts:
  -   `items` describes each menu item: labels, route|uri, translate, role
- -   `tree` describes each menu container as hierarchy of menu items  
+ -   `tree` describes each menu container as hierarchy of menu items
 
 3. `items` can be configured from config file and annotations in controller class and actions
 
-4. We can juggle any configured menu items in containers 
+4. We can juggle any configured menu items in containers
 
-5. Menu twig helper supports route parameters, needed for changing menu items visibility on demand, based on acl 
+5. Menu twig helper supports route parameters, needed for changing menu items visibility on demand, based on acl
 
-6. Menu options merged from multiple sources: `tree` section of config, `item` section, `@Menu` annotations in action method, `@Menu` annotation in controller class  
+6. Menu options merged from multiple sources: `tree` section of config, `item` section, `@Menu` annotations in action method, `@Menu` annotation in controller class
 
 <a name="installation"></a>
 ## Installation
@@ -72,7 +72,7 @@ imports:
 knp_menu:
     twig:  # use "twig: false" to disable the Twig extension and the TwigRenderer
         template: MillwrightMenuBundle:Default:knp_menu.html.twig
-        
+
     templating: false # if true, enables the helper for PHP templates
     default_renderer: twig # The renderer to use, list is also available by default
 ```
@@ -96,7 +96,7 @@ Any bundle can provide own menu or modify existing through `millwright_menu.menu
 ```
 
 `order` attribute - order of provided menu.
-First parameter is the collection of menu options. 
+First parameter is the collection of menu options.
 By default one menu provided by MillwrightMenuBundle and configured in `millwright_menu` section of the application config.
 
 ```yaml
@@ -135,7 +135,7 @@ millwright_menu:
     tree: #menu containers
         user_admin: #user administration links container
             type: navigation # menu type id
-            children:        
+            children:
                 fos_user_profile_show: ~
                 fos_user_change_password: ~
 
@@ -178,7 +178,7 @@ class DefaultController extends Controller {
 <a name="context"></a>
 ## Using menu in templates
 
-`millwright_menu_render` supports additional route parameters, the other options are equivalent to knp_menu_render. 
+`millwright_menu_render` supports additional route parameters, the other options are equivalent to knp_menu_render.
 
 ```jinja
 {{ millwright_menu_render('main', routeParams, options, renderer) }}
@@ -214,7 +214,7 @@ millwright_menu:
                 ...
     items:
         <key>:
-            <item options> 
+            <item options>
     ...
     tree:
         <menu_name>:
@@ -226,7 +226,7 @@ millwright_menu:
 `items` section:
 
 -   `<key>` - used as default value for name, route and label
--   `uri` - uri string, if no route parameter set 
+-   `uri` - uri string, if no route parameter set
 -   `label` - label text or translation string template
 -   `name` - name of menu item, used as default for route
 -   `attributes` - knp menu item options
@@ -243,6 +243,7 @@ millwright_menu:
 -   `routeAbsolute` - true for absolute url generation
 -   `showNonAuthorized` - show for non-authorized users
 -   `showAsText` - if authorized and no access to item, show item as text
+-   `icon` - icon class for menu item
 
 
 `tree` section:
@@ -271,7 +272,7 @@ millwright_menu:
 /**
  * @Menu(translateDomain="MillwrightMenuBundle")
  */
-class ArticleController extends Controller 
+class ArticleController extends Controller
 {
     /**
      * @Route("/articles", name="article_index")
@@ -301,7 +302,7 @@ class ArticleController extends Controller
     public function viewAction(Article $article) {
         return array('article' => $article);
     }
-    
+
     /**
      * @Route("/article/{article}/edit", name="article_edit")
      * @Template()
@@ -311,7 +312,7 @@ class ArticleController extends Controller
     public function editAction(Article $article) {
         //
     }
-    
+
     /**
      * @Route("/article/{article}/delete", name="article_delete")
      * @Template()
@@ -334,7 +335,7 @@ millwright_menu:
             type: menu
             children:
                 article_create: ~
-    
+
         article_actions:
             type: actions
             children:

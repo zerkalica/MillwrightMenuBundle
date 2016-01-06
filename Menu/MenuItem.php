@@ -19,6 +19,34 @@ use Knp\Menu\MenuItem as KnpMenuItem;
 class MenuItem extends KnpMenuItem
 {
     /**
+     * @var string Icon class for menu item
+     */
+    protected $icon = null;
+
+    /**
+     * Set icon class
+     *
+     * @param string $icon
+     *
+     * @return $this
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+        return $this;
+    }
+
+    /**
+     * Get icon class
+     *
+     * @return string
+     */
+    public function getIcon()
+    {
+        return (string) $this->icon;
+    }
+
+    /**
      * {@inheritdoc}
      * @see Knp\Menu.MenuItem::addChild()
      *

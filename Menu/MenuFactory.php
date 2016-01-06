@@ -220,6 +220,7 @@ class MenuFactory implements MenuFactoryInterface
             'routeRequiredParameters' => array(),
             'showNonAuthorized'       => false,
             'showAsText'              => false,
+            'icon'                    => null,
         );
 
         $item = $this->createItemInstance($name);
@@ -263,7 +264,8 @@ class MenuFactory implements MenuFactoryInterface
             ->setLabelAttributes($options['labelAttributes'])
             ->setDisplay($options['display'])
             ->setDisplayChildren($options['displayChildren'])
-            ->setExtras($extra);
+            ->setExtras($extra)
+            ->setIcon($options['icon']);
 
         $itemList[] = array($item, $routeParameters, $options);
 
