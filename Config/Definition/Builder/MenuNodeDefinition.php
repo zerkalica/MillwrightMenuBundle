@@ -96,7 +96,8 @@ class MenuNodeDefinition extends ArrayNodeDefinition
                     ->useAttributeAsKey('routeParameters')->prototype('scalar')->end()
                 ->end()
                 ->booleanNode('showNonAuthorized')->end()
-                ->booleanNode('showAsText')->end();
+                ->booleanNode('showAsText')->end()
+                ->scalarNode('icon')->end();
     }
 
     public function menuNodePlain()
